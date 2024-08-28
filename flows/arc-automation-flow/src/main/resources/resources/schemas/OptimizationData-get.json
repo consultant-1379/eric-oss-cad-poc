@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Optimization response body",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string"
+    },
+    "result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pGnbId": {
+            "type": "integer"
+          },
+          "sGnbId": {
+            "type": "integer"
+          },
+          "usability": {
+            "type": "number"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "pGnbId",
+        "sGnbId",
+        "usability"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "result"
+  ]
+}

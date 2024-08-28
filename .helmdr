@@ -1,0 +1,12 @@
+# Helm design rule check configuration file
+#
+# Any line starting with zero or more spaces and a hash mark is a comment and
+# those lines are ignored. All other text in this file is added to the
+# command-line for the the ADP helm chart design rule check program. See
+# https://eteamspace.internal.ericsson.com/display/AA/Helm+Chart+Design+Rules+and+Guidelines
+# for a helm design rules information. Example:
+#
+# Disable DR-D1121-001
+#-DhelmDesignRule.config.DR-D1121-001=disable
+# Skip DR-D1121-003
+#-DhelmDesignRule.config.DR-D1121-003=skip

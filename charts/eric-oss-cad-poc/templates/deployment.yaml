@@ -1,0 +1,201 @@
+# COPYRIGHT Ericsson 2023
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eric-oss-cad-poc.name" . }}
+  labels: {{- include "eric-oss-cad-poc.labels" . | nindent 4 }}
+  annotations:
+    {{- include "eric-oss-cad-poc.product-info" . | nindent 4 }}
+    prometheus.io/port: {{ .Values.prometheus.port | quote }}
+    prometheus.io/scrape: {{ .Values.prometheus.scrape | quote }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eric-oss-cad-poc.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    type: {{ .Values.updateStrategy.type }}
+  {{- if and (eq .Values.updateStrategy.type "RollingUpdate") .Values.updateStrategy.rollingUpdate }}
+    rollingUpdate:
+    {{- if .Values.updateStrategy.rollingUpdate.maxUnavailable }}
+      maxUnavailable: {{ .Values.updateStrategy.rollingUpdate.maxUnavailable }}
+    {{- end }}
+    {{- if .Values.updateStrategy.rollingUpdate.maxSurge }}
+      maxSurge: {{ .Values.updateStrategy.rollingUpdate.maxSurge }}
+    {{- end }}
+  {{- end }}
+  template:
+    metadata:
+      labels: {{- include "eric-oss-cad-poc.labels" . | nindent 8 }}
+      annotations: {{- include "eric-oss-cad-poc.product-info" . | nindent 8 }}
+    spec:
+      containers:
+        - name: "optimization"
+          {{- $image := merge (dict "imageName" "cadOptimization") . }}
+          image: {{ include "eric-oss-cad-poc.image" $image }}
+          imagePullPolicy: {{ .Values.imageCredentials.pullPolicy | quote }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - all
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.cadOptimization.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources.cadOptimization | nindent 12 }}
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: LOG_LEVEL
+              value: {{ .Values.configuration.logLevel | quote }}
+            - name: TZ
+              value: {{ template "eric-oss-cad-poc.timezone" . }}
+            - name: OBJECT_STORE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.configuration.objectStore.credential | quote }}
+                  key: {{ .Values.configuration.objectStore.accessKey }}
+            - name: OBJECT_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.configuration.objectStore.credential | quote }}
+                  key: {{ .Values.configuration.objectStore.secretkey }}
+            - name: CM_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: CM_USERNAME
+            - name: CM_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: CM_PASSWORD
+            - name: TOPOLOGY_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: TOPOLOGY_USERNAME
+            - name: TOPOLOGY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: TOPOLOGY_PASSWORD
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: MONGO_USERNAME
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: MONGO_PASSWORD
+          volumeMounts:
+            - name: config
+              mountPath: /arc_app/ArcSrv/configs/report_config.yaml
+              subPath: report_config.yaml
+            - name: config
+              mountPath: /arc_app/ArcSrv/configs/mongo_db_config.yaml
+              subPath: mongo_db_config.yaml
+            - name: config
+              mountPath: /arc_app/ArcSrv/configs/client_config.yaml
+              subPath: client_config.yaml
+      {{- if include "eric-oss-cad-poc.pullSecrets" . }}
+      imagePullSecrets:
+        - name: {{ template "eric-oss-cad-poc.pullSecret" . }}
+      {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "eric-oss-cad-poc.name" . }}
+            items:
+              - key: report_config.yaml
+                path: report_config.yaml
+              - key: mongo_db_config.yaml
+                path: mongo_db_config.yaml
+              - key: client_config.yaml
+                path: client_config.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eric-oss-cad-poc.name" . }}-db
+  labels: {{- include "eric-oss-cad-poc.db-labels" . | nindent 4 }}
+  annotations:
+    {{- include "eric-oss-cad-poc.product-info" . | nindent 4 }}
+    prometheus.io/port: {{ .Values.prometheus.port | quote }}
+    prometheus.io/scrape: {{ .Values.prometheus.scrape | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eric-oss-cad-poc.name" . }}-db
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    type: {{ .Values.updateStrategy.type }}
+  {{- if and (eq .Values.updateStrategy.type "RollingUpdate") .Values.updateStrategy.rollingUpdate }}
+    rollingUpdate:
+    {{- if .Values.updateStrategy.rollingUpdate.maxUnavailable }}
+      maxUnavailable: {{ .Values.updateStrategy.rollingUpdate.maxUnavailable }}
+    {{- end }}
+    {{- if .Values.updateStrategy.rollingUpdate.maxSurge }}
+      maxSurge: {{ .Values.updateStrategy.rollingUpdate.maxSurge }}
+    {{- end }}
+    {{- end }}
+  template:
+    metadata:
+      labels: {{- include "eric-oss-cad-poc.db-labels" . | nindent 8 }}
+      annotations: {{- include "eric-oss-cad-poc.product-info" . | nindent 8 }}
+    spec:
+      containers:
+        - name: mongodb
+          {{- $image := merge (dict "imageName" "mongoDB") . }}
+          image: {{ include "eric-oss-cad-poc.image" $image }}
+          imagePullPolicy: {{ .Values.imageCredentials.pullPolicy | quote }}
+          securityContext:
+            capabilities:
+              drop:
+                - all
+            privileged: false
+            allowPrivilegeEscalation: false
+          ports:
+            - name: mongodb-port
+              containerPort: {{ .Values.service.mongoDB.port }}
+              protocol: TCP
+          env:
+            - name: MONGODB_DATABASE
+              value: {{ .Values.configuration.mongo.database | quote }}
+            - name: MONGODB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: MONGO_USERNAME
+            - name: MONGODB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: MONGO_PASSWORD
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "eric-oss-cad-poc.name" . }}
+                  key: MONGO_PASSWORD
+          resources:
+            {{- toYaml .Values.resources.mongoDB | nindent 12 }}
+      {{- if include "eric-oss-cad-poc.pullSecrets" . }}
+      imagePullSecrets:
+        - name: {{ template "eric-oss-cad-poc.pullSecret" . }}
+      {{- end }}

@@ -1,0 +1,43 @@
+
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "name": "Confirm instance stopping",
+  "type": "object",
+  "properties": {
+    "stopConfirmation": {
+      "name": "Confirm stopping instance?",
+      "type": "object",
+      "format": "radio",
+      "oneOf": [
+        {
+          "properties": {
+            "Yes": {
+              "name": "Yes",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "Yes"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "No": {
+              "name": "No",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "No"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "stopConfirmation"
+  ],
+  "additionalProperties": false
+}

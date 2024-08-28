@@ -1,0 +1,48 @@
+##########################
+## IntelliJ
+##########################
+*.iml
+*.ipr
+*.iws
+
+.idea/
+.idea_modules/
+out/
+
+##########################
+## Maven
+##########################
+dependency-reduced-pom.xml
+pom.xml.*
+
+target/
+
+##########################
+## CI
+##########################
+*.csar
+
+ci/other_*.Jenkinsfile
+ci/other_ruleset2.0.yaml
+csar/**/ASD/**/docker.tar
+csar/**/ASD/*.tgz
+flowAutomation/arc-automation-flow/buildNumber.properties
+
+.config/
+.sonar/
+.bob/
+.scannerwork/
+
+##########################
+## Python
+##########################
+*.pyc
+*.pickle
+*-coverage.xml
+__pycache/
+coverage_results/
+.tox/
+.venv/
+__pycache__
+# File names to ignore
+.coverage

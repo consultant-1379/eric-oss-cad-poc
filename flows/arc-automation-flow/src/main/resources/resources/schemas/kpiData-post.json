@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string"
+    },
+    "result": {
+      "type": "string"
+    },
+    "KpiData": {
+      "type": "object",
+      "additionalProperties": { "type": "integer" }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "result",
+    "KpiData"
+  ]
+}

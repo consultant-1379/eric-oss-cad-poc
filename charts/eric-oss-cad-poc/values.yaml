@@ -1,0 +1,90 @@
+#
+# COPYRIGHT Ericsson 2022
+#
+# Default values for eric-ran-rapp-cad-optimization.
+
+global:
+  timezone: UTC
+  registry:
+    imagePullPolicy: IfNotPresent
+
+replicaCount: 1
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+# runAsUser: 1000
+
+images: {}
+
+service:
+  type: ClusterIP
+  cadOptimization:
+    port: 5000
+    targetPort: 5000
+  mongoDB:
+    port: 27017
+    targetPort: 27017
+
+resources:
+  cadOptimization:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  mongoDB:
+    requests:
+      cpu: 1
+      memory: 512Mi
+
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+productInfo:
+  rstate: RSTATE
+
+prometheus:
+  port: 8080
+  scrape: true
+
+imageCredentials:
+  pullPolicy: IfNotPresent
+
+configuration:
+  logLevel: INFO
+  topology:
+    username: topology-user
+    password: topology-password
+  cm:
+    username: cm-user
+    password: cm-password
+  mongo:
+    username: mongodb
+    password: password123
+    database: "arc_db"
+  objectStore:
+    hostname: eric-data-object-storage-mn
+    credential: eric-data-object-storage-mn-secret
+    accessKey: accesskey
+    secretkey: secretkey
+    bucketName: "cad"
+    retentionPolicy: 15

@@ -1,0 +1,51 @@
+{
+  "namespace": "ericsson.dmm.schemas.avro",
+  "name": "PMData",
+  "type": "record",
+  "fields": [
+    {
+      "name": "gnb_id",
+      "type": "int"
+    },
+    {
+      "name": "cell_id",
+      "type": "int"
+    },
+    {
+      "name": "pm_mac_vol_dl_s_cell_ext",
+      "type": "int"
+    },
+    {
+      "name": "pm_mac_vol_dl",
+      "type": "int"
+    },
+    {
+      "name": "pm_mac_vol_dl_drb",
+      "type": "int"
+    },
+    {
+      "name": "pm_active_ue_dl_sum",
+      "type": "int"
+    },
+    {
+      "name": "pm_mac_r_b_sym_avail_dl",
+      "type": "int"
+    },
+    {
+      "name": "pm_mac_r_b_sym_used_pdsch_type_a",
+      "type": "int"
+    },
+    {
+      "name": "gnb_id_len",
+      "type": "int"
+    },
+    {
+      "name": "s_n_c_i",
+      "type": "long"
+    },
+    {
+      "name": "p_time",
+      "type": "string"
+    }
+  ]
+}

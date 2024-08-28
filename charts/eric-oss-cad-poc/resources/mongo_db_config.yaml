@@ -1,0 +1,17 @@
+# COPYRIGHT Ericsson 2023
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+
+mongodb:
+  host: "{{ include "eric-oss-cad-poc.name" . }}-db"
+  port: {{ .Values.service.mongoDB.port }}
+  username: "${MONGO_USERNAME}"
+  password: "${MONGO_PASSWORD}"
+  arc_db_name: {{ .Values.configuration.mongo.database | quote }}
+  auth_mechanism: "SCRAM-SHA-256"
+  auth_source: {{ .Values.configuration.mongo.database | quote }}
+  db_time_zone_aware: true

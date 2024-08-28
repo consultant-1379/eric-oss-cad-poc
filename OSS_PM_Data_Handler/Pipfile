@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "==2.27.1"
+fastavro = "==1.5.4"
+confluent-kafka = "==1.9.0"
+pymongo = "==4.2.0"
+pyyaml = "==6.0"
+
+[dev-packages]
+tox = "==3.24.1"
+coverage = "==6.3.2"
+
+[requires]
+python_version = "3.10"

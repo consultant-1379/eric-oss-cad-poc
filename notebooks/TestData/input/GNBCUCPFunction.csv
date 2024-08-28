@@ -1,0 +1,6 @@
+,fdn,pLMNId,gNBIdLength,gNBId
+0,"SubNetwork=CH,SubNetwork=RAN,SubNetwork=MRAN01,MeContext=NODE_A,ManagedElement=NODE_A,GNBCUCPFunction=1",,22,100001
+1,"SubNetwork=CH,SubNetwork=RAN,SubNetwork=MRAN02,MeContext=NODE_B,ManagedElement=NODE_B,GNBCUCPFunction=1",,22,100002
+2,"SubNetwork=CH,SubNetwork=RAN,SubNetwork=MRAN03,MeContext=NODE_C,ManagedElement=NODE_C,GNBCUCPFunction=1",,22,100003
+3,"SubNetwork=CH,SubNetwork=RAN,SubNetwork=MRAN04,MeContext=NODE_D,ManagedElement=NODE_D,GNBCUCPFunction=1",,22,100004
+4,"SubNetwork=CH,SubNetwork=RAN,SubNetwork=MRAN05,MeContext=NODE_E,ManagedElement=NODE_E,GNBCUCPFunction=1",,22,100005

@@ -1,0 +1,45 @@
+{
+  "selectGNBDUs" : {
+    "table" : [ {
+      "gNBName" : "Europe/Ireland/NR02gNodeBRadio00021/NR02gNodeBRadio00021/1",
+      "gNBId" : 270
+    }, {
+      "gNBName" : "Europe/Ireland/NR04gNodeBRadio00023/NR04gNodeBRadio00023/1",
+      "gNBId" : 279
+    } ]
+  },
+  "unwantedGNodeBPairsSelection" : {
+    "primaryGNBDUExclusion" : [ ],
+    "secondaryGNBDUExclusion" : [ ],
+    "readOnlyTable" : [ ]
+  },
+  "mandatoryGNodeBPairsSelection" : {
+    "primaryGNBDUMandatory" : [ ],
+    "secondaryGNBDUMandatory" : [ ],
+    "readOnlyTable" : [ ]
+  },
+  "selectScheduleUserTask" : {
+    "startTime" : {
+      "specifyDate" : {
+        "specifyDate" : "2022-04-25T07:51:41.601Z"
+      }
+    },
+    "baselineKPI" : {
+      "no" : true
+    },
+    "recurrence" : {
+      "withRecurrence" : {
+        "selectRecurrencePreference" : {
+          "recurrencePattern" : {
+            "daily" : true
+          },
+          "recurrenceStop" : {
+            "endDate" : {
+              "specifyDate" : "2022-04-26T06:51:31.601Z"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.5.1">
+  <bpmn:error id="Error_1ms9yn0" name="CLI Rest Request Failed" errorCode="error.fa.flowapi.exception" />
+  <bpmn:error id="Error_0xrj8ad" name="CLI Rest Request Failed" errorCode="error.fa.flowapi.exception" />
+  <bpmn:error id="Error_0bhyrqt" name="UserTaskValidationError" errorCode="com.ericsson.oss.services.flowautomation.flowapi.usertask.UsertaskInputProcessingError" />
+  <bpmn:error id="Error_0l7qicf" name="error.fa.usertask.input.invalid" camunda:errorMessage="error.fa.usertask.input.invalid" />
+  <bpmn:error id="Error_0of5apm" name="error.fa.usertask.input.invalid" camunda:errorMessage="error.fa.usertask.input.invalid" />
+  <bpmn:error id="Error_1mxpob2" name="Rest request failed" errorCode="error.arc_automation.exception" />
+  <bpmn:error id="Error_1o671ga" name="invalidInput" errorCode="invalidInput" camunda:errorMessage="Invalid input" />
+  <bpmn:process id="flow-setup" name="Carrier Aggregation Deployment Setup" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1yrfvwt" name="Start" camunda:asyncAfter="true" camunda:exclusive="false">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">execution.setVariable("partnerConstraintsProvided", true)
+execution.setVariable("scheduleProvided", true)
+execution.setVariable("emptySelection", [])</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0tygyer</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_Is_Interactive_Or_FileInput" default="SequenceFlow_1rcg26z">
+      <bpmn:incoming>SequenceFlow_0tygyer</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rcg26z</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_021773d</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_License_Check_User_Task" name="License Check" camunda:asyncAfter="true" camunda:exclusive="false" camunda:formKey="setup:licenseCheck">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "License Check In Progress")</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1rcg26z</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wuswup</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_Prepare_GNBDUs_List" name="Prepare gNBDUs List" scriptFormat="groovy" camunda:resource="deployment://groovy/SelectGNBDUsWithCTSProxy.groovy">
+      <bpmn:incoming>Flow_1wuswup</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pdhiuc</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="Activity_Select_GNBDUs_User_Task" name="Select gNBDUs" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" camunda:formKey="setup:selectGNBDUs">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gNBList">${gNBList}</camunda:inputParameter>
+          <camunda:inputParameter name="selectedGnbs">${selectedGnbs}</camunda:inputParameter>
+          <camunda:outputParameter name="selectGNBDUs">${selectGNBDUs}</camunda:outputParameter>
+        </camunda:inputOutput>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Select GNBDUs")</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1pdhiuc</bpmn:incoming>
+      <bpmn:outgoing>Flow_00up1nt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_16mwoqp" name="End">
+      <bpmn:incoming>Flow_1q6rnro</bpmn:incoming>
+      <bpmn:incoming>Flow_0g4nj6f</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_Select_Execution_Schedule_User_Task" name="Select Execution Schedule" camunda:asyncBefore="true" camunda:exclusive="false" camunda:formKey="setup:selectScheduleUserTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="currentTime">${currentTime}</camunda:inputParameter>
+          <camunda:outputParameter name="selectScheduleUserTask">${selectScheduleUserTask}</camunda:outputParameter>
+          <camunda:outputParameter name="recurrence">${selectScheduleUserTask.recurrence}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14bv1xx</bpmn:incoming>
+      <bpmn:outgoing>Flow_017v7l0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_Validate_Setup_File_Input" name="Validate Setup File Input" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="groovy" camunda:resource="deployment://groovy/ValidateSetupFileInput.groovy">
+      <bpmn:incoming>SequenceFlow_021773d</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dsid6e</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_Validate_Execution_Schedule" name="Validate Execution Schedule" scriptFormat="groovy" camunda:resource="deployment://groovy/ExecutionScheduleValidation.groovy">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="setupMode">InteractiveModeSchedulerValidation</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_017v7l0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1q6rnro</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="Activity_18dh7or" name="Error Handler" camunda:asyncBefore="true" camunda:exclusive="false" triggeredByEvent="true">
+      <bpmn:endEvent id="Event_1t4s4lz">
+        <bpmn:incoming>Flow_15ameje</bpmn:incoming>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1tuyllf" errorRef="Error_1mxpob2" />
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="Activity_Update_Report" name="Update report" camunda:asyncBefore="true" camunda:exclusive="false" scriptFormat="groovy">
+        <bpmn:incoming>Flow_12uf2i8</bpmn:incoming>
+        <bpmn:outgoing>Flow_15ameje</bpmn:outgoing>
+        <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+Reporter.updateReportSummary(execution, "Execution Failed")</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="Flow_12uf2i8" sourceRef="Event_0pdbe7b" targetRef="Activity_Update_Report" />
+      <bpmn:sequenceFlow id="Flow_15ameje" sourceRef="Activity_Update_Report" targetRef="Event_1t4s4lz" />
+      <bpmn:startEvent id="Event_0pdbe7b">
+        <bpmn:outgoing>Flow_12uf2i8</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1sqcdg8" />
+      </bpmn:startEvent>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1q6rnro" sourceRef="Activity_Validate_Execution_Schedule" targetRef="EndEvent_16mwoqp" />
+    <bpmn:sequenceFlow id="Flow_017v7l0" sourceRef="Activity_Select_Execution_Schedule_User_Task" targetRef="Activity_Validate_Execution_Schedule" />
+    <bpmn:sequenceFlow id="SequenceFlow_0tygyer" sourceRef="StartEvent_1yrfvwt" targetRef="ExclusiveGateway_Is_Interactive_Or_FileInput" />
+    <bpmn:sequenceFlow id="SequenceFlow_1rcg26z" name="Interactive Mode" sourceRef="ExclusiveGateway_Is_Interactive_Or_FileInput" targetRef="Activity_License_Check_User_Task" />
+    <bpmn:sequenceFlow id="SequenceFlow_021773d" name="File Input Mode" sourceRef="ExclusiveGateway_Is_Interactive_Or_FileInput" targetRef="Activity_Validate_Setup_File_Input">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty flowInput}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1wuswup" sourceRef="Activity_License_Check_User_Task" targetRef="Activity_Prepare_GNBDUs_List" />
+    <bpmn:sequenceFlow id="Flow_1pdhiuc" sourceRef="Activity_Prepare_GNBDUs_List" targetRef="Activity_Select_GNBDUs_User_Task" />
+    <bpmn:sequenceFlow id="Flow_1dsid6e" sourceRef="Activity_Validate_Setup_File_Input" targetRef="Gateway_Unwanted_Pairs_Provided" />
+    <bpmn:scriptTask id="Activity_Validate_Scheduler_File_Input" name="Validate Scheduler In Input File" scriptFormat="groovy" camunda:resource="deployment://groovy/ExecutionScheduleValidation.groovy">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="setupMode">fileInputModeSchedulerValidation</camunda:inputParameter>
+          <camunda:inputParameter name="selectScheduleUserTask">${flowInput.selectScheduleUserTask}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1r49bsn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g4nj6f</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0g4nj6f" sourceRef="Activity_Validate_Scheduler_File_Input" targetRef="EndEvent_16mwoqp" />
+    <bpmn:exclusiveGateway id="Gateway_Unwanted_Pairs_Provided" name="Did user provide the schedule or the unwanted pairs?" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" default="Flow_1ce6ldy">
+      <bpmn:incoming>Flow_1dsid6e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0eo0ecr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ce6ldy</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0eo0ecr" name="Yes" sourceRef="Gateway_Unwanted_Pairs_Provided" targetRef="Gateway_Schedule_Provided">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${partnerConstraintsProvided || scheduleProvided}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1ce6ldy" name="No" sourceRef="Gateway_Unwanted_Pairs_Provided" targetRef="Gateway_Select_Unwanted_Pairs" />
+    <bpmn:exclusiveGateway id="Gateway_Schedule_Provided" name="Did user provide the schedule?" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" default="Flow_0xz2nrq">
+      <bpmn:incoming>Flow_0eo0ecr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r49bsn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0xz2nrq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1r49bsn" name="Yes" sourceRef="Gateway_Schedule_Provided" targetRef="Activity_Validate_Scheduler_File_Input">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${scheduleProvided}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_14bv1xx" sourceRef="Gateway_Select_Execution_Schedule" targetRef="Activity_Select_Execution_Schedule_User_Task">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+import java.time.Instant
+
+Reporter.updateReportSummary(execution, "Fill the scheduler")
+execution.setVariable("currentTime",Instant.now().toString())</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0xz2nrq" name="No" sourceRef="Gateway_Schedule_Provided" targetRef="Gateway_Select_Execution_Schedule" />
+    <bpmn:exclusiveGateway id="Gateway_Select_Execution_Schedule">
+      <bpmn:incoming>Flow_0xz2nrq</bpmn:incoming>
+      <bpmn:incoming>Flow_0phl4fa</bpmn:incoming>
+      <bpmn:outgoing>Flow_14bv1xx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_Select_Unwanted_Pairs">
+      <bpmn:incoming>Flow_1ce6ldy</bpmn:incoming>
+      <bpmn:incoming>Flow_1b3p9g6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c7qpyu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_1qk7cp2" name="Unwanted gNodeB Pairs Selection" camunda:asyncBefore="true" camunda:exclusive="false" camunda:formKey="setup:unwantedGNodeBPairsSelection">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="selectedGNBDUs">${flowInput.selectGNBDUs.table}</camunda:inputParameter>
+          <camunda:inputParameter name="excludedPairs">${excludedPairs}</camunda:inputParameter>
+          <camunda:inputParameter name="secGNBDUs">${secGNBDUs}</camunda:inputParameter>
+          <camunda:outputParameter name="unwantedGNodeBPairsSelection">${unwantedGNodeBPairsSelection}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1c7qpyu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fr0ag1</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1fr0ag1" sourceRef="Activity_1qk7cp2" targetRef="Activity_05am8fi" />
+    <bpmn:sequenceFlow id="Flow_1c7qpyu" sourceRef="Gateway_Select_Unwanted_Pairs" targetRef="Activity_1qk7cp2">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">List&lt;?&gt; excludedPairs= []
+execution.setVariable("excludedPairs", excludedPairs)
+List&lt;?&gt; mandatoryPairs= []
+execution.setVariable("mandatoryPairs", mandatoryPairs)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_05am8fi" name="Validate entry" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="groovy" camunda:resource="deployment://groovy/ValidateUnwantedGNodeBPairSelection.groovy">
+      <bpmn:incoming>Flow_1fr0ag1</bpmn:incoming>
+      <bpmn:outgoing>Flow_06344bl</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_06344bl" sourceRef="Activity_05am8fi" targetRef="Activity_1dcuqzn">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">flowInput?.unwantedGNodeBPairsSelection = unwantedGNodeBPairsSelection</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_00up1nt" sourceRef="Activity_Select_GNBDUs_User_Task" targetRef="Activity_0kr9ej6">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">flowInput?.selectGNBDUs= selectGNBDUs</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_1dcuqzn" name="Mandatory gNodeB Pairs Selection" camunda:asyncBefore="true" camunda:exclusive="false" camunda:formKey="setup:mandatoryGNodeBPairsSelection">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="selectedGNBDUs">${flowInput.selectGNBDUs.table}</camunda:inputParameter>
+          <camunda:inputParameter name="mandatoryPairs">${mandatoryPairs}</camunda:inputParameter>
+          <camunda:inputParameter name="secGNBDUs">${secGNBDUs}</camunda:inputParameter>
+          <camunda:outputParameter name="mandatoryGNodeBPairsSelection">${mandatoryGNodeBPairsSelection}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06344bl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1agpihz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1agpihz" sourceRef="Activity_1dcuqzn" targetRef="Activity_1sl30yj" />
+    <bpmn:scriptTask id="Activity_1sl30yj" name="Validate entry" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="groovy" camunda:resource="deployment://groovy/ValidateMandatoryGNodeBPairSelection.groovy">
+      <bpmn:incoming>Flow_1agpihz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0phl4fa</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0kr9ej6" name="Collect Secondary Nodes" scriptFormat="groovy" camunda:resource="deployment://groovy/CollectSecondaryNodes.groovy">
+      <bpmn:incoming>Flow_00up1nt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b3p9g6</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1b3p9g6" sourceRef="Activity_0kr9ej6" targetRef="Gateway_Select_Unwanted_Pairs" />
+    <bpmn:sequenceFlow id="Flow_0phl4fa" sourceRef="Activity_1sl30yj" targetRef="Gateway_Select_Execution_Schedule">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">flowInput?.mandatoryGNodeBPairsSelection= mandatoryGNodeBPairsSelection</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:textAnnotation id="TextAnnotation_Hand_Picking_GNBDUs_For_Optimization">
+      <bpmn:text>Hand-picking gNBDUs for optimization</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_Planning_Optimization_Schedule">
+      <bpmn:text>Planning the optimization schedule</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_Validating_Execution_Schedule">
+      <bpmn:text>Validating the execution schedule</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_Establishing_Connection_With_Topology_Service">
+      <bpmn:text>Establishing a connection with the topology service</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_Checking_User_License">
+      <bpmn:text>Checking user's license (not yet implemented)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_Checking_And_Validating_Setup_File_Input">
+      <bpmn:text>Checking and validating the setup file submitted by the user</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_075sws9" sourceRef="Activity_Validate_Execution_Schedule" targetRef="TextAnnotation_Validating_Execution_Schedule" />
+    <bpmn:association id="Association_0lhidtw" sourceRef="Activity_Validate_Setup_File_Input" targetRef="TextAnnotation_Checking_And_Validating_Setup_File_Input" />
+    <bpmn:association id="Association_1y2j993" sourceRef="Activity_License_Check_User_Task" targetRef="TextAnnotation_Checking_User_License" />
+    <bpmn:association id="Association_17cpryj" sourceRef="Activity_Select_Execution_Schedule_User_Task" targetRef="TextAnnotation_Planning_Optimization_Schedule" />
+    <bpmn:association id="Association_1496ihv" sourceRef="Activity_Select_GNBDUs_User_Task" targetRef="TextAnnotation_Hand_Picking_GNBDUs_For_Optimization" />
+    <bpmn:association id="Association_1qpb1vk" sourceRef="Activity_Prepare_GNBDUs_List" targetRef="TextAnnotation_Establishing_Connection_With_Topology_Service" />
+    <bpmn:textAnnotation id="TextAnnotation_1h5nsl8">
+      <bpmn:text>Validating scheduler input data submitted by the user</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0rf0v6o" sourceRef="Activity_Validate_Scheduler_File_Input" targetRef="TextAnnotation_1h5nsl8" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="flow-setup">
+      <bpmndi:BPMNShape id="StartEvent_1yrfvwt_di" bpmnElement="StartEvent_1yrfvwt">
+        <dc:Bounds x="118" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="125" y="405" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_15hv5y0_di" bpmnElement="ExclusiveGateway_Is_Interactive_Or_FileInput" isMarkerVisible="true">
+        <dc:Bounds x="225" y="355" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h3widl_di" bpmnElement="Activity_License_Check_User_Task">
+        <dc:Bounds x="410" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05p8c78_di" bpmnElement="Activity_Prepare_GNBDUs_List">
+        <dc:Bounds x="565" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0thvnbx_di" bpmnElement="Activity_Select_GNBDUs_User_Task">
+        <dc:Bounds x="700" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_16mwoqp_di" bpmnElement="EndEvent_16mwoqp">
+        <dc:Bounds x="2330" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2338" y="408" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nxohv5_di" bpmnElement="Activity_Select_Execution_Schedule_User_Task">
+        <dc:Bounds x="1988" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qaru15_di" bpmnElement="Activity_Validate_Setup_File_Input">
+        <dc:Bounds x="540" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kr01pn_di" bpmnElement="Activity_Validate_Execution_Schedule">
+        <dc:Bounds x="2148" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18dh7or_di" bpmnElement="Activity_18dh7or" isExpanded="true">
+        <dc:Bounds x="330" y="590" width="400" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1t4s4lz_di" bpmnElement="Event_1t4s4lz">
+        <dc:Bounds x="623" y="656" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wc7tmc_di" bpmnElement="Activity_Update_Report">
+        <dc:Bounds x="461" y="634" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0an61xs_di" bpmnElement="Event_0pdbe7b">
+        <dc:Bounds x="360" y="656" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_12uf2i8_di" bpmnElement="Flow_12uf2i8">
+        <di:waypoint x="396" y="674" />
+        <di:waypoint x="461" y="674" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15ameje_di" bpmnElement="Flow_15ameje">
+        <di:waypoint x="561" y="674" />
+        <di:waypoint x="623" y="674" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1so0iqx_di" bpmnElement="Activity_Validate_Scheduler_File_Input">
+        <dc:Bounds x="1992" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_07lt21j_di" bpmnElement="Gateway_Unwanted_Pairs_Provided" isMarkerVisible="true">
+        <dc:Bounds x="939" y="165" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="956" y="109" width="81" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0dx4ld4_di" bpmnElement="Gateway_Schedule_Provided" isMarkerVisible="true">
+        <dc:Bounds x="1897" y="165" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1913" y="135" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0p9avpj_di" bpmnElement="Gateway_Select_Execution_Schedule" isMarkerVisible="true">
+        <dc:Bounds x="1897" y="355" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0s1pfoj_di" bpmnElement="Gateway_Select_Unwanted_Pairs" isMarkerVisible="true">
+        <dc:Bounds x="939" y="355" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dm4hxu_di" bpmnElement="Activity_1qk7cp2">
+        <dc:Bounds x="1030" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vu5yu8_di" bpmnElement="Activity_05am8fi">
+        <dc:Bounds x="1190" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dcuqzn_di" bpmnElement="Activity_1dcuqzn">
+        <dc:Bounds x="1460" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sl30yj_di" bpmnElement="Activity_1sl30yj">
+        <dc:Bounds x="1630" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lqoskf_di" bpmnElement="Activity_0kr9ej6">
+        <dc:Bounds x="820" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0sabsxo_di" bpmnElement="TextAnnotation_Hand_Picking_GNBDUs_For_Optimization">
+        <dc:Bounds x="790" y="270" width="150" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1q6y5a0_di" bpmnElement="TextAnnotation_Planning_Optimization_Schedule">
+        <dc:Bounds x="2078" y="270" width="130" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0f2nt8u_di" bpmnElement="TextAnnotation_Validating_Execution_Schedule">
+        <dc:Bounds x="2208" y="269" width="140" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0md6abm_di" bpmnElement="TextAnnotation_Establishing_Connection_With_Topology_Service">
+        <dc:Bounds x="620" y="270" width="170" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_063jotu_di" bpmnElement="TextAnnotation_Checking_User_License">
+        <dc:Bounds x="470" y="270" width="140" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_00irio9_di" bpmnElement="TextAnnotation_Checking_And_Validating_Setup_File_Input">
+        <dc:Bounds x="590" y="55" width="190" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1h5nsl8_di" bpmnElement="TextAnnotation_1h5nsl8">
+        <dc:Bounds x="2067" y="55" width="155" height="35" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1q6rnro_di" bpmnElement="Flow_1q6rnro">
+        <di:waypoint x="2248" y="380" />
+        <di:waypoint x="2330" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_017v7l0_di" bpmnElement="Flow_017v7l0">
+        <di:waypoint x="2088" y="380" />
+        <di:waypoint x="2148" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tygyer_di" bpmnElement="SequenceFlow_0tygyer">
+        <di:waypoint x="154" y="380" />
+        <di:waypoint x="225" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rcg26z_di" bpmnElement="SequenceFlow_1rcg26z">
+        <di:waypoint x="275" y="380" />
+        <di:waypoint x="410" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="298" y="359" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_021773d_di" bpmnElement="SequenceFlow_021773d">
+        <di:waypoint x="250" y="355" />
+        <di:waypoint x="250" y="190" />
+        <di:waypoint x="540" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="168" y="328" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wuswup_di" bpmnElement="Flow_1wuswup">
+        <di:waypoint x="510" y="380" />
+        <di:waypoint x="565" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pdhiuc_di" bpmnElement="Flow_1pdhiuc">
+        <di:waypoint x="665" y="380" />
+        <di:waypoint x="700" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dsid6e_di" bpmnElement="Flow_1dsid6e">
+        <di:waypoint x="640" y="190" />
+        <di:waypoint x="939" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g4nj6f_di" bpmnElement="Flow_0g4nj6f">
+        <di:waypoint x="2092" y="190" />
+        <di:waypoint x="2348" y="190" />
+        <di:waypoint x="2348" y="362" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eo0ecr_di" bpmnElement="Flow_0eo0ecr">
+        <di:waypoint x="989" y="190" />
+        <di:waypoint x="1897" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1093" y="172" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ce6ldy_di" bpmnElement="Flow_1ce6ldy">
+        <di:waypoint x="964" y="215" />
+        <di:waypoint x="964" y="355" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="972" y="233" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r49bsn_di" bpmnElement="Flow_1r49bsn">
+        <di:waypoint x="1947" y="190" />
+        <di:waypoint x="1992" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1961" y="172" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14bv1xx_di" bpmnElement="Flow_14bv1xx">
+        <di:waypoint x="1947" y="380" />
+        <di:waypoint x="1988" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xz2nrq_di" bpmnElement="Flow_0xz2nrq">
+        <di:waypoint x="1922" y="215" />
+        <di:waypoint x="1922" y="355" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1930" y="233" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fr0ag1_di" bpmnElement="Flow_1fr0ag1">
+        <di:waypoint x="1130" y="380" />
+        <di:waypoint x="1190" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c7qpyu_di" bpmnElement="Flow_1c7qpyu">
+        <di:waypoint x="989" y="380" />
+        <di:waypoint x="1030" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06344bl_di" bpmnElement="Flow_06344bl">
+        <di:waypoint x="1290" y="380" />
+        <di:waypoint x="1460" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00up1nt_di" bpmnElement="Flow_00up1nt">
+        <di:waypoint x="800" y="380" />
+        <di:waypoint x="820" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1agpihz_di" bpmnElement="Flow_1agpihz">
+        <di:waypoint x="1560" y="380" />
+        <di:waypoint x="1630" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0phl4fa_di" bpmnElement="Flow_0phl4fa">
+        <di:waypoint x="1730" y="380" />
+        <di:waypoint x="1897" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b3p9g6_di" bpmnElement="Flow_1b3p9g6">
+        <di:waypoint x="920" y="380" />
+        <di:waypoint x="939" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_075sws9_di" bpmnElement="Association_075sws9">
+        <di:waypoint x="2223" y="340" />
+        <di:waypoint x="2241" y="309" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0lhidtw_di" bpmnElement="Association_0lhidtw">
+        <di:waypoint x="622" y="150" />
+        <di:waypoint x="663" y="95" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1y2j993_di" bpmnElement="Association_1y2j993">
+        <di:waypoint x="485" y="340" />
+        <di:waypoint x="502" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_17cpryj_di" bpmnElement="Association_17cpryj">
+        <di:waypoint x="2082" y="341" />
+        <di:waypoint x="2106" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1496ihv_di" bpmnElement="Association_1496ihv">
+        <di:waypoint x="789" y="340" />
+        <di:waypoint x="815" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1qpb1vk_di" bpmnElement="Association_1qpb1vk">
+        <di:waypoint x="638" y="340" />
+        <di:waypoint x="653" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0rf0v6o_di" bpmnElement="Association_0rf0v6o">
+        <di:waypoint x="2071" y="150" />
+        <di:waypoint x="2114" y="90" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

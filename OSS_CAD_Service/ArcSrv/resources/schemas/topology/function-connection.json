@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "allOf": [
+    {
+      "$ref": "wireless-resource.json"
+    }
+  ],
+  "properties": {
+    "_type": {
+      "type": "string"
+    },
+    "wirelessNetFunctions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "value": {
+            "$ref": "gnb.json#"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "_type"
+  ]
+}

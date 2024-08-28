@@ -1,0 +1,13 @@
+---
+ignore: |
+  charts/eric-ran-rapp-cad-helm/charts/eric-ran-rapp-cad-ctsproxy/templates/*.yaml
+  charts/eric-ran-rapp-cad-helm/charts/eric-ran-rapp-cad-ncmpproxy/templates/*.yaml
+  charts/eric-ran-rapp-cad-helm/charts/eric-ran-rapp-cad-optimization/templates/*.yaml
+
+extends: relaxed
+rules:
+  line-length:
+    max: 150
+
+new-line-at-end-of-file: disable
+

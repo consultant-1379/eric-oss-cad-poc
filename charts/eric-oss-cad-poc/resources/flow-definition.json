@@ -1,0 +1,15 @@
+{
+  "flowId": "com.ericsson.oss.flow.arc-automation",
+  "flowName": "Carrier Aggregation Deployment",
+  "flowVersion": {{ (split "-" (.Chart.Version | replace "+" "-"))._0 | quote }},
+  "description": "Automate and optimize the configuration of Advanced RAN Coordination (ARC) partners for carrier aggregation.",
+  "setup": {
+    "processId": "flow-setup",
+    "userTask": {
+      "backEnabled": false
+    }
+  },
+  "execute": {
+    "processId": "flow-execute"
+  }
+}

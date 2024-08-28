@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+############################################################
+# Help                                                     #
+############################################################
+Help()
+{
+   # Display Help
+   echo "Generate csar package from helm chart."
+   echo
+   echo "Syntax: ./generate-csar [-n|h|v|c|o]"
+   echo "options:"
+   echo "-n       enter app name "
+   echo "-o       enter csar name"
+   echo "-h       display Help"
+   echo "-v       enter app version"
+   echo "-c       specify helm chart"
+   echo "Folder output specified as: /tmp/csar"
+   echo
+}
+
+############################################################
+############################################################
+# Main program                                             #
+############################################################
+############################################################
+
+
+
+
+############################################################
+# Process the input options. Add options as needed.        #
+############################################################
+# Get the options
+while getopts ":hn:v:c:o:" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit;;
+      n)
+         name=$OPTARG;;
+      v)
+         version=$OPTARG;;
+	    c)
+         chart=$OPTARG;;
+      o)
+         csar=$OPTARG;;
+     \?) # Invalid option
+         echo "Error: Invalid option"
+         Help
+         exit;;
+   esac
+done
+
+
+
+echo "[TASK 1]: Create CSAR package folder and sub-folders."
+
+
+mkdir -p csar/Definitions
+mkdir -p csar/Metadata
+mkdir -p csar/OtherDefinitions/ASD
+mkdir -p tmp/csar
+
+
+mv $chart csar/OtherDefinitions/ASD
+
+echo "[TASK 2]: Create AppDescriptor file."
+cat >>csar/Definitions/AppDescriptor.yaml<<EOF
+Description of an APP:
+    APPName: $name
+    APPVersion: $version
+    APPType: rApp
+APPComponent:
+    NameofComponent: $name
+    Version: $version
+    Path: OtherDefinitions/ASD/ASD.yaml
+    ArtefactType: Microservice
+EOF
+
+echo "[TASK 3]: Create Meta file."
+cat >>csar/Metadata/Tosca.meta<<EOF
+TOSCA-Meta-File-Version: $version
+CSAR-Version: $version
+Created-By: Ericsson
+Entry-Definitions: Definitions/AppDescriptor.yaml
+Entry-OtherDefinitions: OtherDefinitions/ASD/ASD.yaml
+EOF
+
+echo "[TASK 4]: Create ASD file."
+cat >>csar/OtherDefinitions/ASD/ASD.yaml<<EOF
+asdId: 1
+asdSchemaVersion: 1.0.0
+asdProvider: Ericsson
+asdApplicationName: $name
+asdApplicationVersion: $version
+asdApplicationInfoName: $name Application
+asdInfoDescription: $name Application for App Onboarding
+deploymentItems:
+    deploymentItemId: 1
+    artifactId: OtherDefinitions/ASD/$chart
+
+EOF
+
+dir=`pwd`
+echo "[TASK 5]: Create CSAR package from the modified eric-oss-app-package-tool."
+pushd csar
+eric-oss-app-package-tool generate --tosca ${dir}/csar/Metadata/Tosca.meta --name $csar --helm3 --output tmp/csar
+popd

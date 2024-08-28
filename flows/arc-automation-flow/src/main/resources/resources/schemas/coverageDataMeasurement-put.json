@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "NCMPSimulator CoverageDataMeasurementgNB response",
+  "description": "A response from NCMPSimulator CoverageDataMeasurementgNB",
+  "type": "object",
+  "properties": {
+    "ListofEnabledgNB": {
+      "description": "A list of Enabled gNB",
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "ListofNotFoundGNB": {
+      "description": "A list of Not Found GNB",
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    }
+  },
+  "required": [ "ListofEnabledgNB", "ListofNotFoundGNB" ],
+  "additionalProperties": false
+}

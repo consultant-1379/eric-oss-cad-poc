@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string"
+    },
+    "id": {
+      "type": "integer"
+    },
+    "href": {
+      "type": "string"
+    },
+    "externalId": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "revisionNumber": {
+      "type": "integer"
+    },
+    "createdOn": {
+      "type": "string"
+    },
+    "createdBy": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "lastModifiedOn": {
+      "type": "string"
+    },
+    "lastModifiedBy": {
+      "type": "string"
+    },
+    "revisionGroupKey": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "keyValue": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "keyValue"
+      ]
+    },
+    "versionNumber": {
+      "type": "integer"
+    },
+    "key": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "keyValue": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "keyValue"
+      ]
+    }
+  },
+  "required": [
+    "type",
+    "id",
+    "href",
+    "name",
+    "revisionNumber",
+    "createdOn",
+    "createdBy",
+    "status",
+    "lastModifiedOn",
+    "lastModifiedBy",
+    "revisionGroupKey",
+    "versionNumber",
+    "key"
+  ]
+}

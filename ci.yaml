@@ -1,0 +1,199 @@
+# COPYRIGHT Ericsson 2023
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+
+# This file declares the artifacts/products built in this repository.
+artifacts:
+    3pp-report:
+        tags:
+            - generic
+
+    ci-tools-img:
+        tags:
+            - container-image
+
+    eric-ran-rapp-cad:
+        external-name: RAN_RAPP_CAD
+        product-number: CXF1010289/1
+        tags:
+            - csar-package
+        depends:
+            - eric-ran-rapp-cad-helm
+
+    eric-ran-rapp-cad-ctsproxy-docker:
+        product-number: CXU1011715/1
+        tags:
+            - container-image
+        depends:
+            - common-base-os
+
+    eric-ran-rapp-cad-docker:
+        product-number: CXU1011706/1
+        tags:
+            - container-image
+        depends:
+            - common-base-os
+
+    eric-ran-rapp-cad-ncmpproxy-docker:
+        product-number: CXU1011716/1
+        tags:
+            - container-image
+        depends:
+            - common-base-os
+
+    eric-ran-rapp-cad-pm-data-handler-docker:
+        product-number: CXU1011757/1
+        tags:
+            - container-image
+        depends:
+            - common-base-os
+
+    eric-ran-rapp-cad-helm:
+        product-number: CXD101420/1
+        tags:
+            - helm-chart
+        depends:
+            - eric-ran-rapp-cad-docker
+            - eric-ran-rapp-cad-ctsproxy-docker
+            - eric-ran-rapp-cad-ncmpproxy-docker
+            - eric-ran-rapp-cad-pm-data-handler-docker
+
+    eric-ran-rapp-cad-src:
+        product-number: CAH1092951/1
+        tags:
+            - git-repository
+
+    flow-automation:
+        product-number: CXP1050552/1
+        tags:
+            - generic
+
+    pm-data-producer-sim:
+        product-number:
+        tags:
+            - container-image
+        depends:
+            - common-base-os
+
+external-artifacts:
+    # External dependencies
+    common-base-os:
+        product-number: CXC 201 2032/3
+        # 3.60.0
+        version: R61A
+    anyio:
+        bazaar-number: 7/CTX1032961
+        biz-name: python:anyio
+        # below are faked values for anyio, to be able to test the license agreement flow.
+        product-number: CTC xxx xxxx
+        version: R1A
+        sw-name: anyio
+        sw-version: 3.6.1
+        manufacturer: https://github.com/agronholm/anyio
+        license_type: MIT License
+    asgiref:
+        bazaar-number: 6/CTX1020290
+        biz-name: python:asgiref
+    avro-to-python-types:
+        bazaar-number:
+        biz-name: python:avro-to-python-types
+    black:
+        bazaar-number: 10/CTX1026309
+        biz-name: python:black
+    certifi:
+        bazaar-number: 25/CTX1020628
+        biz-name: python:certifi
+    charset-normalizer:
+        bazaar-number: 13/CTX1032640
+        biz-name: python:charset-normalizer
+    click:
+        bazaar-number: 13/CAX1058601
+        biz-name: python:click
+    confluent-kafka:
+        bazaar-number: CTX1020377
+        biz-name: python:confluent-kafka
+    colorama:
+        bazaar-number: 7/CAX1059078
+        biz-name: python:colorama
+    fastapi:
+        bazaar-number: 11/CTX1030071
+        biz-name: python:fastapi
+    fastavro:
+        bazaar-number: CTX1026080
+        biz-name: python:fastavro
+    h11:
+        bazaar-number: 2/CTX1031576
+        biz-name: python:h11
+    idna:
+        bazaar-number: 11/CAX1058316
+        biz-name: python:idna
+    llvmlite:
+        bazaar-number: CTX1026344
+        biz-name: python:llvmlite
+    markupsafe:
+        bazaar-number: 8/CAX1056401
+        biz-name: python:markupsafe
+    mypy-extensions:
+        bazaar-number: 1/CTX1031149
+        biz-name: python:mypy-extensions
+    numba:
+        bazaar-number: CTX1026347
+        biz-name: python:numba
+    numpy:
+        bazaar-number: 56/CAX1057111
+        biz-name: python:numpy
+    pandas:
+        bazaar-number: 35/CAX1057900
+        biz-name: python:pandas
+    pathspec:
+        bazaar-number: 2/CTX1031506
+        biz-name: python:pathspec
+    platformdirs:
+        bazaar-number: 3/CTX1034010
+        biz-name: python:platformdirs
+    pydantic:
+        bazaar-number: 6/CTX1030577
+        biz-name: python:pydantic
+    pymongo:
+        bazaar-number: 19/CAX1057051
+        biz-name: python:pymongo
+    python-dateutil:
+        bazaar-number: 13/CAX1057771
+        biz-name: python:python-dateutil
+    python-json-logger:
+        bazaar-number: 5/CTX1023187
+        biz-name: python:python-json-logger
+    pytz:
+        bazaar-number: 28/CAX1056526
+        biz-name: python:pytz
+    requests:
+        bazaar-number: 31/CAX1056548
+        biz-name: python:requests
+    setuptools:
+        bazaar-number: CAX1054853
+        biz-name: python:setuptools
+    six:
+        bazaar-number: 13/CAX1056543
+        biz-name: python:six
+    sniffio:
+        bazaar-number: 1/CTX1032981
+        biz-name: python:sniffio
+    starlette:
+        bazaar-number: 5/CTX1030839
+        biz-name: python:starlette
+    tomli:
+        bazaar-number: 3/CTX1033391
+        biz-name: python:tomli
+    typing-extensions:
+        bazaar-number: 8/CTX1033609
+        biz-name: python:typing-extensions
+    urllib3:
+        bazaar-number: 34/CAX1057288
+        biz-name: python:urllib3
+    uvicorn:
+        bazaar-number: 3/CTX1030837
+        biz-name: python:uvicorn

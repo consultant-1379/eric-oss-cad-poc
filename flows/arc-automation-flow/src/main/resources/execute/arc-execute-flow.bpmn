@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.5.1">
+  <bpmn:process id="flow-execute" name="Carrier Aggregation Deployment Execution" isExecutable="true">
+    <bpmn:exclusiveGateway id="Gateway_Excluive_Is_Apply_New_BB_Pairs_Links" name="Apply the New BB Pairs Links?" default="Flow_062dml3">
+      <bpmn:incoming>Flow_0qqzkhf</bpmn:incoming>
+      <bpmn:outgoing>Flow_062dml3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1lvd4dc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_062dml3" name="No" sourceRef="Gateway_Excluive_Is_Apply_New_BB_Pairs_Links" targetRef="Gateway_Exclusive_Is_Another_Optimization">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder
+
+final String occurrenceInfo = execution.getVariable("occurrenceInfo")
+if (optimizationResultTableIsEmpty == false){
+EventRecorder.info(execution, occurrenceInfo + "Proposed BB pairs were refused by the user")
+}
+execution.setVariable("endingDelay","PT0.1S")
+execution.setVariable('ConfigureBBpairs.YesRadioButton', false)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_Confirm_Configuration_User_Task" name="Confirm Configuration" camunda:asyncAfter="true" camunda:exclusive="false" camunda:formKey="execute:flow-execution-dynamic-confirm-configuration.ftl">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="optimizationResultTableIsEmpty">${optimizationResultTableIsEmpty}</camunda:inputParameter>
+          <camunda:inputParameter name="optimizationResultTable">${optimizationResultTable}</camunda:inputParameter>
+          <camunda:outputParameter name="table">${table}</camunda:outputParameter>
+          <camunda:outputParameter name="ConfigureBBpairs">${ConfigureBBpairs}</camunda:outputParameter>
+        </camunda:inputOutput>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="groovy">flowInput.table= table
+
+</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ou2d4g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qqzkhf</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0qqzkhf" sourceRef="Activity_Confirm_Configuration_User_Task" targetRef="Gateway_Excluive_Is_Apply_New_BB_Pairs_Links" />
+    <bpmn:scriptTask id="Activity_Scheduler" name="Scheduler" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="groovy" camunda:resource="deployment://groovy/Scheduler.groovy">
+      <bpmn:incoming>Flow_162hi8u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0w75drl</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_Optimization" name="Optimization" camunda:asyncBefore="true" camunda:exclusive="false" scriptFormat="Groovy" camunda:resource="deployment://groovy/Optimization.groovy">
+      <bpmn:incoming>Flow_0rfd1lp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tmzg1p</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:startEvent id="start" name="Start" camunda:asyncAfter="true" camunda:exclusive="false">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportVariable(execution, "statusOfOptimization", 'not started')</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">execution.setVariable("optimizationId", "None")
+execution.setVariable("PMDataStarted", false)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0p0pnke</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_Exclusive_Is_Optimization_Finished" name="Optimization Finished?" default="Flow_0gd4d94">
+      <bpmn:incoming>Flow_0tmzg1p</bpmn:incoming>
+      <bpmn:outgoing>Flow_14lgry4</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0gd4d94</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_14lgry4" name="Yes" sourceRef="Gateway_Exclusive_Is_Optimization_Finished" targetRef="Activity_14quhm8">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Optimization finished")
+</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${status == "finished"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0gd4d94" name="No" sourceRef="Gateway_Exclusive_Is_Optimization_Finished" targetRef="Event_Delay_Waiting_For_Optimization" />
+    <bpmn:sequenceFlow id="Flow_1kvbdvj" sourceRef="Activity_Start_Optimization" targetRef="Event_Delay_Waiting_For_Optimization" />
+    <bpmn:scriptTask id="Activity_Start_Optimization" name="Start Optimization" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="Groovy" camunda:resource="deployment://groovy/StartOptimization.groovy">
+      <bpmn:incoming>Flow_07qtron</bpmn:incoming>
+      <bpmn:incoming>Flow_1rdtw1t</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kvbdvj</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0tmzg1p" sourceRef="Activity_Optimization" targetRef="Gateway_Exclusive_Is_Optimization_Finished" />
+    <bpmn:intermediateCatchEvent id="Event_Delay_Waiting_For_Optimization" name="Delay">
+      <bpmn:incoming>Flow_1kvbdvj</bpmn:incoming>
+      <bpmn:incoming>Flow_0gd4d94</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rfd1lp</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0iqipr6">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT3S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0rfd1lp" sourceRef="Event_Delay_Waiting_For_Optimization" targetRef="Activity_Optimization" />
+    <bpmn:sequenceFlow id="Flow_0p0pnke" sourceRef="start" targetRef="Gateway_Parallel_Stop_Instance_Optimization" />
+    <bpmn:sequenceFlow id="Flow_0w75drl" sourceRef="Activity_Scheduler" targetRef="Event_Start_Time_Trigger" />
+    <bpmn:intermediateCatchEvent id="Event_Delay_Before_Next_Optimization" name="Waiting Time">
+      <bpmn:extensionElements>
+        <camunda:failedJobRetryTimeCycle>R2</camunda:failedJobRetryTimeCycle>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder
+
+
+EventRecorder.info(execution, "Next optimization is scheduled for" + " " + execution.getVariable("nextOptimizationDate"))</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="groovy">import java.time.Duration
+import java.time.Instant
+
+execution.setVariable("nextOptimizationDate", Instant.parse(execution.getVariable("nextOptimizationDate")).plus(Duration.parse(execution.getVariable("recurrence"))).toString())</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0sxh4vj</bpmn:incoming>
+      <bpmn:outgoing>Flow_07qtron</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0dxjkcs">
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${nextOptimizationDate}</bpmn:timeDate>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="Gateway_Exclusive_Is_Another_Optimization" name="Another Optimization?" default="Flow_06m17jb">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy" resource="deployment://groovy/Recurrence.groovy" />
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_062dml3</bpmn:incoming>
+      <bpmn:incoming>Flow_03298ve</bpmn:incoming>
+      <bpmn:outgoing>Flow_0sxh4vj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_06m17jb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_06m17jb" name="No" sourceRef="Gateway_Exclusive_Is_Another_Optimization" targetRef="Activity_Stop_Optimization" />
+    <bpmn:sequenceFlow id="Flow_0sxh4vj" name="Yes" sourceRef="Gateway_Exclusive_Is_Another_Optimization" targetRef="Event_Delay_Before_Next_Optimization">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Waiting until next optimization")</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${recurrenceContinue}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1c1y6fi" sourceRef="Activity_Visualize_Gnb_List_User_Task" targetRef="Activity_PM_Data_Collection" />
+    <bpmn:sequenceFlow id="Flow_162hi8u" sourceRef="Activity_PM_Data_Collection" targetRef="Activity_Scheduler" />
+    <bpmn:subProcess id="SubProcess_Error_Handler" name="Error Handler" camunda:asyncBefore="true" camunda:exclusive="false" triggeredByEvent="true">
+      <bpmn:endEvent id="Event_14fly41">
+        <bpmn:incoming>Flow_1d412su</bpmn:incoming>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0t1939o" errorRef="Error_0o53hgt" />
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="Activity_Update_Report_Summary" name="Update Report Summary" camunda:asyncBefore="true" camunda:exclusive="false" scriptFormat="groovy">
+        <bpmn:incoming>Flow_14f5fe5</bpmn:incoming>
+        <bpmn:outgoing>Flow_1au434t</bpmn:outgoing>
+        <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+
+Reporter.updateReportSummary(execution, "Execution failed")</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:startEvent id="Event_1fr2dey">
+        <bpmn:outgoing>Flow_14f5fe5</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1xwu4pz" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_14f5fe5" sourceRef="Event_1fr2dey" targetRef="Activity_Update_Report_Summary" />
+      <bpmn:sequenceFlow id="Flow_1au434t" sourceRef="Activity_Update_Report_Summary" targetRef="Activity_Dismiss_Optimization_ID" />
+      <bpmn:scriptTask id="Activity_Dismiss_Optimization_ID" name="Stop External Services" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="groovy" camunda:resource="deployment://groovy/StopExternalServices.groovy">
+        <bpmn:incoming>Flow_1au434t</bpmn:incoming>
+        <bpmn:outgoing>Flow_1d412su</bpmn:outgoing>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="Flow_1d412su" sourceRef="Activity_Dismiss_Optimization_ID" targetRef="Event_14fly41" />
+    </bpmn:subProcess>
+    <bpmn:userTask id="Activity_Visualize_Gnb_List_User_Task" name="Visualize gNB to Trigger Optimization" camunda:asyncAfter="true" camunda:exclusive="false" camunda:formKey="execute:flow-execution-trigger-ue-measurement.ftl">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnbNotFoundListIsEmpty">${gnbNotFoundList.isEmpty()}</camunda:inputParameter>
+          <camunda:inputParameter name="gnbIdNotFoundList">${gnbNotFoundList}</camunda:inputParameter>
+          <camunda:inputParameter name="gnbIdList">${gnbIdList}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bwnjhs</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c1y6fi</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_Trigger_UE_Measurement" name="Trigger NCMP UE Measurement" camunda:asyncBefore="true" camunda:exclusive="false" scriptFormat="groovy" camunda:resource="deployment://groovy/TriggerUeMeasurement.groovy">
+      <bpmn:incoming>Flow_1ra2pjz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bwnjhs</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0bwnjhs" sourceRef="Activity_Trigger_UE_Measurement" targetRef="Activity_Visualize_Gnb_List_User_Task" />
+    <bpmn:scriptTask id="Activity_PM_Data_Collection" name="PM Data Collection" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1c1y6fi</bpmn:incoming>
+      <bpmn:outgoing>Flow_162hi8u</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "PM data collection")
+execution.setVariable("PMDataStarted", true)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="Activity_Optimization_Results_Configuration" name="Optimization Results Configuration" camunda:formKey="execute:flow-execution-check-Optimization.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="showConfiguration">${showConfiguration}</camunda:inputParameter>
+          <camunda:outputParameter name="showConfiguration">${showConfiguration}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1r0fayf</bpmn:incoming>
+      <bpmn:outgoing>Flow_04ww039</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_Exclusive_Is_Reccurence_Selected" name="Recurrence Selected?" default="Flow_0aye25g">
+      <bpmn:incoming>Flow_04ww039</bpmn:incoming>
+      <bpmn:incoming>Flow_03qm851</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r0fayf</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0aye25g</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_04ww039" sourceRef="Activity_Optimization_Results_Configuration" targetRef="Gateway_Exclusive_Is_Reccurence_Selected" />
+    <bpmn:sequenceFlow id="Flow_1r0fayf" name="Yes" sourceRef="Gateway_Exclusive_Is_Reccurence_Selected" targetRef="Activity_Optimization_Results_Configuration">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${hasRecurrence == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_Exclusive_Is_Apply_Optimization_Results_Automatically" name="Apply Optimization Results Automatically?" default="Flow_0n0w1s0">
+      <bpmn:incoming>Flow_02rpn2e</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ou2d4g</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0n0w1s0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1ou2d4g" name="No" sourceRef="Gateway_Exclusive_Is_Apply_Optimization_Results_Automatically" targetRef="Activity_Confirm_Configuration_User_Task">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">execution.setVariable('ConfigureBBpairs', null)
+execution.setVariable('table', null)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${showConfiguration== "no"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1lvd4dc" name="Yes" sourceRef="Gateway_Excluive_Is_Apply_New_BB_Pairs_Links" targetRef="Activity_New_Links_Deployment_PlaceHolder">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder
+
+final String occurrenceInfo = execution.getVariable("occurrenceInfo")
+EventRecorder.info(execution, occurrenceInfo + "User applied new BB pairs links")
+execution.setVariable('ConfigureBBpairs.YesRadioButton', true)
+</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${ConfigureBBpairs.YesRadioButton == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0n0w1s0" name="Yes" sourceRef="Gateway_Exclusive_Is_Apply_Optimization_Results_Automatically" targetRef="Activity_New_Links_Deployment_PlaceHolder">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder
+
+final String occurrenceInfo = execution.getVariable("occurrenceInfo")
+if (!execution.getVariable("optimizationResultTableIsEmpty")) {
+EventRecorder.info(execution, occurrenceInfo + "Applying optimization results automatically")
+}
+
+execution.setVariable('ConfigureBBpairs.YesRadioButton', false)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="end" name="End">
+      <bpmn:incoming>Flow_00vasti</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_09sgxx8" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_03qm851" sourceRef="Gateway_Parallel_GetKPIData_OptimizaitionResultsConfig" targetRef="Gateway_Exclusive_Is_Reccurence_Selected" />
+    <bpmn:endEvent id="Event_1dyqott">
+      <bpmn:incoming>Flow_0aye25g</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0aye25g" name="No" sourceRef="Gateway_Exclusive_Is_Reccurence_Selected" targetRef="Event_1dyqott" />
+    <bpmn:sequenceFlow id="Flow_03298ve" sourceRef="Activity_New_Links_Deployment_PlaceHolder" targetRef="Gateway_Exclusive_Is_Another_Optimization">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">execution.setVariable("endingDelay","PT5S")</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_New_Links_Deployment_PlaceHolder" name="New links Deployment PlaceHolder" camunda:asyncBefore="true" camunda:exclusive="false" scriptFormat="Groovy" camunda:resource="deployment://groovy/LinksDeployment.groovy">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "BB links configuration finished")</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0n0w1s0</bpmn:incoming>
+      <bpmn:incoming>Flow_1lvd4dc</bpmn:incoming>
+      <bpmn:outgoing>Flow_03298ve</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1p75ila" sourceRef="Event_EndDate_Reached_Before_Optimization" targetRef="Event_EndDate_Reached_Before_Starting_Optimization">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder
+
+String message = "End date was reached before optimization starts"
+Reporter.updateReportSummary(execution, message)
+EventRecorder.info(execution, message)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_Show_Baseline_KPI" name="Show Baseline KPI ?" default="Flow_0tubn2l">
+      <bpmn:incoming>Flow_0zsyf3h</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tubn2l</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1w6hdf1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0tubn2l" name="No" sourceRef="Gateway_Show_Baseline_KPI" targetRef="Gateway_021q52z" />
+    <bpmn:intermediateCatchEvent id="Event_Observation_Time" name="Observation &#10;Time">
+      <bpmn:incoming>Flow_1w6hdf1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1v56wwt</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_13dtu5v">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${observationTime}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1w6hdf1" name="Yes" sourceRef="Gateway_Show_Baseline_KPI" targetRef="Event_Observation_Time">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${showBaselineKPI == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1v56wwt" sourceRef="Event_Observation_Time" targetRef="Activity_Get_Baseline_KPI" />
+    <bpmn:scriptTask id="Activity_Get_Baseline_KPI" name="Get Baseline KPI" camunda:asyncBefore="true" scriptFormat="groovy" camunda:resource="deployment://groovy/GetBaselineKPI.groovy">
+      <bpmn:incoming>Flow_1v56wwt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wughps</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1wughps" sourceRef="Activity_Get_Baseline_KPI" targetRef="Gateway_021q52z" />
+    <bpmn:parallelGateway id="Gateway_Parallel_GetKPIData_OptimizaitionResultsConfig">
+      <bpmn:incoming>Flow_0oy5ng7</bpmn:incoming>
+      <bpmn:outgoing>Flow_03qm851</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1u0qghz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1r6htqe</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_021q52z">
+      <bpmn:incoming>Flow_1wughps</bpmn:incoming>
+      <bpmn:incoming>Flow_0tubn2l</bpmn:incoming>
+      <bpmn:outgoing>Flow_0oy5ng7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0oy5ng7" sourceRef="Gateway_021q52z" targetRef="Gateway_Parallel_GetKPIData_OptimizaitionResultsConfig" />
+    <bpmn:boundaryEvent id="Event_EndDate_Reached_Before_Optimization" camunda:asyncAfter="true" camunda:exclusive="false" attachedToRef="Activity_Scheduler">
+      <bpmn:outgoing>Flow_1p75ila</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition id="ConditionalEventDefinition_1pu2err">
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">${endDateOccurred}</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0zsyf3h" sourceRef="Event_Start_Time_Trigger" targetRef="Gateway_Show_Baseline_KPI">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">ArrayList kpisData = []
+execution.setVariable("kpisData",kpisData)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateCatchEvent id="Event_Start_Time_Trigger" name="Start Time&#10;Trigger">
+      <bpmn:incoming>Flow_0w75drl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zsyf3h</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_094ujs4">
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${startDate}</bpmn:timeDate>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1u0qghz" sourceRef="Gateway_Parallel_GetKPIData_OptimizaitionResultsConfig" targetRef="Activity_Assign_Optimization_ID" />
+    <bpmn:sequenceFlow id="Flow_07qtron" sourceRef="Event_Delay_Before_Next_Optimization" targetRef="Activity_Start_Optimization" />
+    <bpmn:exclusiveGateway id="Gateway_GetKPIsAfterOptimization">
+      <bpmn:incoming>Flow_1r6htqe</bpmn:incoming>
+      <bpmn:incoming>Flow_1vff87d</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p8lale</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1r6htqe" sourceRef="Gateway_Parallel_GetKPIData_OptimizaitionResultsConfig" targetRef="Gateway_GetKPIsAfterOptimization" />
+    <bpmn:sequenceFlow id="Flow_1p8lale" sourceRef="Gateway_GetKPIsAfterOptimization" targetRef="Event_Delay_Waiting_For_Next_KPIs" />
+    <bpmn:intermediateCatchEvent id="Event_Delay_Waiting_For_Next_KPIs" name="Waiting Time">
+      <bpmn:incoming>Flow_1p8lale</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lic4fg</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_175xag6">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT2S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:scriptTask id="Activity_Get_Triggered_KPI" name="Get Triggered KPI" camunda:asyncBefore="true" camunda:exclusive="false" scriptFormat="Groovy" camunda:resource="deployment://groovy/GetTriggeredKPI.groovy">
+      <bpmn:incoming>Flow_0lic4fg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vff87d</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0lic4fg" sourceRef="Event_Delay_Waiting_For_Next_KPIs" targetRef="Activity_Get_Triggered_KPI" />
+    <bpmn:sequenceFlow id="Flow_1vff87d" sourceRef="Activity_Get_Triggered_KPI" targetRef="Gateway_GetKPIsAfterOptimization" />
+    <bpmn:sequenceFlow id="Flow_00vasti" sourceRef="Event_Delay_Before_End" targetRef="end" />
+    <bpmn:intermediateCatchEvent id="Event_Delay_Before_End" name="Delay">
+      <bpmn:incoming>Flow_06zjs81</bpmn:incoming>
+      <bpmn:outgoing>Flow_00vasti</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0uvu86w">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${endingDelay}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:scriptTask id="Activity_Assign_Optimization_ID" name="Assign Optimization ID" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="Groovy" camunda:resource="deployment://groovy/AssignOptimizationId.groovy">
+      <bpmn:incoming>Flow_1u0qghz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rdtw1t</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1rdtw1t" sourceRef="Activity_Assign_Optimization_ID" targetRef="Activity_Start_Optimization" />
+    <bpmn:sequenceFlow id="Flow_06zjs81" sourceRef="Activity_Stop_Optimization" targetRef="Event_Delay_Before_End" />
+    <bpmn:scriptTask id="Activity_Stop_Optimization" name="Stop External Services" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="groovy" camunda:resource="deployment://groovy/StopExternalServices.groovy">
+      <bpmn:incoming>Flow_06m17jb</bpmn:incoming>
+      <bpmn:outgoing>Flow_06zjs81</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="Activity_Confirm_Stop_Instance" name="Confirm Stop Instance" camunda:asyncAfter="true" camunda:exclusive="false" camunda:formKey="execute:flow-execution-confirm-stop-instance.json">
+      <bpmn:incoming>Flow_0krcdef</bpmn:incoming>
+      <bpmn:outgoing>Flow_01lk8di</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_Stop_Instance" name="Stop Instance" camunda:asyncBefore="true" camunda:exclusive="false" camunda:formKey="execute:flow-execution-stop-instance.json">
+      <bpmn:incoming>Flow_1nuvr6g</bpmn:incoming>
+      <bpmn:incoming>Flow_1k6dx97</bpmn:incoming>
+      <bpmn:outgoing>Flow_0krcdef</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateThrowEvent id="Event_19q4g1h" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false">
+      <bpmn:incoming>Flow_06zhzij</bpmn:incoming>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_1cihae4" signalRef="Signal_11jr2s5" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:exclusiveGateway id="Gateway_Exclusive_Stop_Instance_Decision" name="Stop Instance Confirmed?" default="Flow_06zhzij">
+      <bpmn:incoming>Flow_01lk8di</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nuvr6g</bpmn:outgoing>
+      <bpmn:outgoing>Flow_06zhzij</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0krcdef" sourceRef="Activity_Stop_Instance" targetRef="Activity_Confirm_Stop_Instance" />
+    <bpmn:sequenceFlow id="Flow_01lk8di" sourceRef="Activity_Confirm_Stop_Instance" targetRef="Gateway_Exclusive_Stop_Instance_Decision" />
+    <bpmn:sequenceFlow id="Flow_1nuvr6g" sourceRef="Gateway_Exclusive_Stop_Instance_Decision" targetRef="Activity_Stop_Instance">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${stopConfirmation.No == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_06zhzij" sourceRef="Gateway_Exclusive_Stop_Instance_Decision" targetRef="Event_19q4g1h" />
+    <bpmn:sequenceFlow id="Flow_1ra2pjz" sourceRef="Gateway_Parallel_Stop_Instance_Optimization" targetRef="Activity_Trigger_UE_Measurement" />
+    <bpmn:parallelGateway id="Gateway_Parallel_Stop_Instance_Optimization">
+      <bpmn:incoming>Flow_0p0pnke</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ra2pjz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1k6dx97</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1k6dx97" sourceRef="Gateway_Parallel_Stop_Instance_Optimization" targetRef="Activity_Stop_Instance" />
+    <bpmn:subProcess id="SubProcess_Cancellation_Handler" name="Cancelation Handler" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_1sqyo24" camunda:asyncAfter="true" camunda:exclusive="false">
+        <bpmn:outgoing>Flow_01yx6ay</bpmn:outgoing>
+        <bpmn:signalEventDefinition id="SignalEventDefinition_127ceb3" signalRef="Signal_11jr2s5" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_13qn70x">
+        <bpmn:incoming>Flow_15a1e31</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_01yx6ay" sourceRef="Event_1sqyo24" targetRef="Activity_Stop_Gracefully" />
+      <bpmn:sequenceFlow id="Flow_15a1e31" sourceRef="Activity_Stop_Gracefully" targetRef="Event_13qn70x">
+        <bpmn:extensionElements>
+          <camunda:executionListener event="take">
+            <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Flow stopped gracefully")</camunda:script>
+          </camunda:executionListener>
+        </bpmn:extensionElements>
+      </bpmn:sequenceFlow>
+      <bpmn:scriptTask id="Activity_Stop_Gracefully" name="Stop External Services" scriptFormat="groovy" camunda:resource="deployment://groovy/StopExternalServices.groovy">
+        <bpmn:incoming>Flow_01yx6ay</bpmn:incoming>
+        <bpmn:outgoing>Flow_15a1e31</bpmn:outgoing>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+    <bpmn:endEvent id="Event_EndDate_Reached_Before_Starting_Optimization" name="EndDate Reached Before Starting Optimization">
+      <bpmn:incoming>Flow_1p75ila</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_00o39sg" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_02rpn2e" sourceRef="Activity_14quhm8" targetRef="Gateway_Exclusive_Is_Apply_Optimization_Results_Automatically" />
+    <bpmn:scriptTask id="Activity_14quhm8" name="Validate Optimization Results" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="Groovy" camunda:resource="deployment://groovy/ValidateOptimizationResults.groovy">
+      <bpmn:incoming>Flow_14lgry4</bpmn:incoming>
+      <bpmn:outgoing>Flow_02rpn2e</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:group id="Group_Wait_For_Optimization" categoryValueRef="CategoryValue_0knpiug" />
+  </bpmn:process>
+  <bpmn:error id="Error_0o53hgt" name="Rest request failed" errorCode="error.arc_automation.exception" />
+  <bpmn:error id="Error_0u5w3eg" name="Error_2bac5q4" />
+  <bpmn:category id="Category_1pvccsr">
+    <bpmn:categoryValue id="CategoryValue_0knpiug" value="Wait for Optimization" />
+  </bpmn:category>
+  <bpmn:signal id="Signal_11jr2s5" name="alert-${execution.processBusinessKey}" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="flow-execute">
+      <bpmndi:BPMNShape id="Gateway_0bjn8mj_di" bpmnElement="Gateway_Excluive_Is_Apply_New_BB_Pairs_Links" isMarkerVisible="true">
+        <dc:Bounds x="2845" y="495" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2828" y="552" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09f7uee_di" bpmnElement="Activity_Confirm_Configuration_User_Task">
+        <dc:Bounds x="2690" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17l5jv6_di" bpmnElement="Activity_Scheduler">
+        <dc:Bounds x="840" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xp9zug_di" bpmnElement="Activity_Optimization">
+        <dc:Bounds x="2210" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="152" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="161" y="398" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0poji0h_di" bpmnElement="Gateway_Exclusive_Is_Optimization_Finished" isMarkerVisible="true">
+        <dc:Bounds x="2345" y="355" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2339" y="325" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1k3o2fx_di" bpmnElement="Activity_Start_Optimization">
+        <dc:Bounds x="1980" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0h867k7_di" bpmnElement="Event_Delay_Waiting_For_Optimization">
+        <dc:Bounds x="2132" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2136" y="332" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1c1j4l1_di" bpmnElement="Event_Delay_Before_Next_Optimization">
+        <dc:Bounds x="3195" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3241" y="273" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0e44cek_di" bpmnElement="Gateway_Exclusive_Is_Another_Optimization" isMarkerVisible="true">
+        <dc:Bounds x="3188" y="355" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3139" y="336" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09ot463_di" bpmnElement="SubProcess_Error_Handler" isExpanded="true">
+        <dc:Bounds x="2020" y="630" width="530" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14fly41_di" bpmnElement="Event_14fly41">
+        <dc:Bounds x="2490" y="695" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_087whax_di" bpmnElement="Activity_Update_Report_Summary">
+        <dc:Bounds x="2148" y="673" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fr2dey_di" bpmnElement="Event_1fr2dey">
+        <dc:Bounds x="2045" y="695" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0k4rtd7_di" bpmnElement="Activity_Dismiss_Optimization_ID">
+        <dc:Bounds x="2318" y="673" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_14f5fe5_di" bpmnElement="Flow_14f5fe5">
+        <di:waypoint x="2081" y="713" />
+        <di:waypoint x="2148" y="713" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1au434t_di" bpmnElement="Flow_1au434t">
+        <di:waypoint x="2248" y="713" />
+        <di:waypoint x="2318" y="713" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1d412su_di" bpmnElement="Flow_1d412su">
+        <di:waypoint x="2418" y="713" />
+        <di:waypoint x="2490" y="713" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0zcbs29_di" bpmnElement="Activity_Visualize_Gnb_List_User_Task">
+        <dc:Bounds x="520" y="340" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m9ai9b_di" bpmnElement="Activity_Trigger_UE_Measurement">
+        <dc:Bounds x="380" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f0hyxc_di" bpmnElement="Activity_PM_Data_Collection">
+        <dc:Bounds x="680" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vkoqm6_di" bpmnElement="Activity_Optimization_Results_Configuration">
+        <dc:Bounds x="1670" y="530" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ub9yux_di" bpmnElement="Gateway_Exclusive_Is_Reccurence_Selected" isMarkerVisible="true">
+        <dc:Bounds x="1585" y="545" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1532" y="536" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0rvbk19_di" bpmnElement="Gateway_Exclusive_Is_Apply_Optimization_Results_Automatically" isMarkerVisible="true">
+        <dc:Bounds x="2595" y="355" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2585" y="293" width="71" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0f6hjw7_di" bpmnElement="end">
+        <dc:Bounds x="3562" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3570" y="405" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1dyqott_di" bpmnElement="Event_1dyqott">
+        <dc:Bounds x="1592" y="662" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0snkhm2_di" bpmnElement="Activity_New_Links_Deployment_PlaceHolder">
+        <dc:Bounds x="2820" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1a1qezf_di" bpmnElement="Gateway_Show_Baseline_KPI" isMarkerVisible="true">
+        <dc:Bounds x="1125" y="355" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1115" y="318" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0sdt9jv_di" bpmnElement="Event_Observation_Time">
+        <dc:Bounds x="1132" y="452" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1062" y="457" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1em4x9n_di" bpmnElement="Activity_Get_Baseline_KPI">
+        <dc:Bounds x="1190" y="500" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1lh6ftw_di" bpmnElement="Gateway_Parallel_GetKPIData_OptimizaitionResultsConfig">
+        <dc:Bounds x="1365" y="355" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_021q52z_di" bpmnElement="Gateway_021q52z" isMarkerVisible="true">
+        <dc:Bounds x="1295" y="355" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11c0mqu_di" bpmnElement="Event_Start_Time_Trigger">
+        <dc:Bounds x="1022" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1015" y="405" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_056kbnn_di" bpmnElement="Gateway_GetKPIsAfterOptimization" isMarkerVisible="true">
+        <dc:Bounds x="1475" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nvzze4_di" bpmnElement="Event_Delay_Waiting_For_Next_KPIs">
+        <dc:Bounds x="1572" y="192" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1560" y="235" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ods922" bpmnElement="Activity_Get_Triggered_KPI">
+        <dc:Bounds x="1670" y="170" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1r1lnfj_di" bpmnElement="Event_Delay_Before_End">
+        <dc:Bounds x="3432" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3436" y="405" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rrkp9o_di" bpmnElement="Activity_Assign_Optimization_ID">
+        <dc:Bounds x="1670" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bsxe2j_di" bpmnElement="Activity_Stop_Optimization">
+        <dc:Bounds x="3290" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02a6ll4_di" bpmnElement="Activity_Confirm_Stop_Instance">
+        <dc:Bounds x="520" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1far43m_di" bpmnElement="Activity_Stop_Instance">
+        <dc:Bounds x="360" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19q4g1h_di" bpmnElement="Event_19q4g1h">
+        <dc:Bounds x="792" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0uic2sw_di" bpmnElement="Gateway_Exclusive_Stop_Instance_Decision" isMarkerVisible="true">
+        <dc:Bounds x="665" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="656" y="232" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_15mz7oc_di" bpmnElement="Gateway_Parallel_Stop_Instance_Optimization">
+        <dc:Bounds x="255" y="355" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0arttot_di" bpmnElement="SubProcess_Cancellation_Handler" isExpanded="true">
+        <dc:Bounds x="400" y="610" width="370" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1sqyo24_di" bpmnElement="Event_1sqyo24">
+        <dc:Bounds x="440" y="692" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13qn70x_di" bpmnElement="Event_13qn70x">
+        <dc:Bounds x="692" y="692" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hva1mk_di" bpmnElement="Activity_Stop_Gracefully">
+        <dc:Bounds x="540" y="670" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_01yx6ay_di" bpmnElement="Flow_01yx6ay">
+        <di:waypoint x="476" y="710" />
+        <di:waypoint x="540" y="710" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15a1e31_di" bpmnElement="Flow_15a1e31">
+        <di:waypoint x="640" y="710" />
+        <di:waypoint x="692" y="710" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0bfih86_di" bpmnElement="Event_EndDate_Reached_Before_Starting_Optimization">
+        <dc:Bounds x="922" y="522" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="895" y="565" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ua3i3l_di" bpmnElement="Activity_14quhm8">
+        <dc:Bounds x="2460" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_123pmd7_di" bpmnElement="Group_Wait_For_Optimization">
+        <dc:Bounds x="2108" y="250" width="300" height="300" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2227" y="257" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0a9tfiv_di" bpmnElement="Event_EndDate_Reached_Before_Optimization">
+        <dc:Bounds x="872" y="402" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_062dml3_di" bpmnElement="Flow_062dml3">
+        <di:waypoint x="2895" y="520" />
+        <di:waypoint x="3213" y="520" />
+        <di:waypoint x="3213" y="405" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2912" y="504" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qqzkhf_di" bpmnElement="Flow_0qqzkhf">
+        <di:waypoint x="2790" y="520" />
+        <di:waypoint x="2845" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14lgry4_di" bpmnElement="Flow_14lgry4">
+        <di:waypoint x="2395" y="380" />
+        <di:waypoint x="2460" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2406" y="383" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gd4d94_di" bpmnElement="Flow_0gd4d94">
+        <di:waypoint x="2370" y="405" />
+        <di:waypoint x="2370" y="520" />
+        <di:waypoint x="2150" y="520" />
+        <di:waypoint x="2150" y="398" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2342" y="434" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kvbdvj_di" bpmnElement="Flow_1kvbdvj">
+        <di:waypoint x="2080" y="380" />
+        <di:waypoint x="2132" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tmzg1p_di" bpmnElement="Flow_0tmzg1p">
+        <di:waypoint x="2310" y="380" />
+        <di:waypoint x="2345" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rfd1lp_di" bpmnElement="Flow_0rfd1lp">
+        <di:waypoint x="2168" y="380" />
+        <di:waypoint x="2210" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p0pnke_di" bpmnElement="Flow_0p0pnke">
+        <di:waypoint x="188" y="380" />
+        <di:waypoint x="255" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w75drl_di" bpmnElement="Flow_0w75drl">
+        <di:waypoint x="940" y="380" />
+        <di:waypoint x="1022" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06m17jb_di" bpmnElement="Flow_06m17jb">
+        <di:waypoint x="3238" y="380" />
+        <di:waypoint x="3290" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3252" y="362" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sxh4vj_di" bpmnElement="Flow_0sxh4vj">
+        <di:waypoint x="3213" y="355" />
+        <di:waypoint x="3213" y="298" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3220" y="316" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c1y6fi_di" bpmnElement="Flow_1c1y6fi">
+        <di:waypoint x="620" y="380" />
+        <di:waypoint x="680" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_162hi8u_di" bpmnElement="Flow_162hi8u">
+        <di:waypoint x="780" y="380" />
+        <di:waypoint x="840" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bwnjhs_di" bpmnElement="Flow_0bwnjhs">
+        <di:waypoint x="480" y="380" />
+        <di:waypoint x="520" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04ww039_di" bpmnElement="Flow_04ww039">
+        <di:waypoint x="1720" y="530" />
+        <di:waypoint x="1720" y="480" />
+        <di:waypoint x="1610" y="480" />
+        <di:waypoint x="1610" y="545" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r0fayf_di" bpmnElement="Flow_1r0fayf">
+        <di:waypoint x="1635" y="570" />
+        <di:waypoint x="1670" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1639" y="552" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ou2d4g_di" bpmnElement="Flow_1ou2d4g">
+        <di:waypoint x="2620" y="405" />
+        <di:waypoint x="2620" y="520" />
+        <di:waypoint x="2690" y="520" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2628" y="434" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lvd4dc_di" bpmnElement="Flow_1lvd4dc">
+        <di:waypoint x="2870" y="495" />
+        <di:waypoint x="2870" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2877" y="434" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n0w1s0_di" bpmnElement="Flow_0n0w1s0">
+        <di:waypoint x="2645" y="380" />
+        <di:waypoint x="2820" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2661" y="383" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03qm851_di" bpmnElement="Flow_03qm851">
+        <di:waypoint x="1390" y="405" />
+        <di:waypoint x="1390" y="570" />
+        <di:waypoint x="1585" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aye25g_di" bpmnElement="Flow_0aye25g">
+        <di:waypoint x="1610" y="595" />
+        <di:waypoint x="1610" y="662" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1622" y="600" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03298ve_di" bpmnElement="Flow_03298ve">
+        <di:waypoint x="2920" y="380" />
+        <di:waypoint x="3188" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p75ila_di" bpmnElement="Flow_1p75ila">
+        <di:waypoint x="890" y="438" />
+        <di:waypoint x="890" y="540" />
+        <di:waypoint x="922" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tubn2l_di" bpmnElement="Flow_0tubn2l">
+        <di:waypoint x="1175" y="380" />
+        <di:waypoint x="1295" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1192" y="362" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w6hdf1_di" bpmnElement="Flow_1w6hdf1">
+        <di:waypoint x="1150" y="405" />
+        <di:waypoint x="1150" y="452" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1157" y="412" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v56wwt_di" bpmnElement="Flow_1v56wwt">
+        <di:waypoint x="1150" y="488" />
+        <di:waypoint x="1150" y="540" />
+        <di:waypoint x="1190" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wughps_di" bpmnElement="Flow_1wughps">
+        <di:waypoint x="1290" y="540" />
+        <di:waypoint x="1320" y="540" />
+        <di:waypoint x="1320" y="405" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oy5ng7_di" bpmnElement="Flow_0oy5ng7">
+        <di:waypoint x="1345" y="380" />
+        <di:waypoint x="1365" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zsyf3h_di" bpmnElement="Flow_0zsyf3h">
+        <di:waypoint x="1058" y="380" />
+        <di:waypoint x="1125" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u0qghz_di" bpmnElement="Flow_1u0qghz">
+        <di:waypoint x="1415" y="380" />
+        <di:waypoint x="1670" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07qtron_di" bpmnElement="Flow_07qtron">
+        <di:waypoint x="3213" y="262" />
+        <di:waypoint x="3213" y="170" />
+        <di:waypoint x="2030" y="170" />
+        <di:waypoint x="2030" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r6htqe_di" bpmnElement="Flow_1r6htqe">
+        <di:waypoint x="1390" y="355" />
+        <di:waypoint x="1390" y="210" />
+        <di:waypoint x="1475" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p8lale_di" bpmnElement="Flow_1p8lale">
+        <di:waypoint x="1525" y="210" />
+        <di:waypoint x="1572" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lic4fg_di" bpmnElement="Flow_0lic4fg">
+        <di:waypoint x="1608" y="210" />
+        <di:waypoint x="1670" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vff87d_di" bpmnElement="Flow_1vff87d">
+        <di:waypoint x="1770" y="210" />
+        <di:waypoint x="1800" y="210" />
+        <di:waypoint x="1800" y="110" />
+        <di:waypoint x="1500" y="110" />
+        <di:waypoint x="1500" y="185" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00vasti_di" bpmnElement="Flow_00vasti">
+        <di:waypoint x="3468" y="380" />
+        <di:waypoint x="3562" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rdtw1t_di" bpmnElement="Flow_1rdtw1t">
+        <di:waypoint x="1770" y="380" />
+        <di:waypoint x="1980" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06zjs81_di" bpmnElement="Flow_06zjs81">
+        <di:waypoint x="3390" y="380" />
+        <di:waypoint x="3432" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0krcdef_di" bpmnElement="Flow_0krcdef">
+        <di:waypoint x="460" y="200" />
+        <di:waypoint x="520" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01lk8di_di" bpmnElement="Flow_01lk8di">
+        <di:waypoint x="620" y="200" />
+        <di:waypoint x="665" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nuvr6g_di" bpmnElement="Flow_1nuvr6g">
+        <di:waypoint x="690" y="175" />
+        <di:waypoint x="690" y="80" />
+        <di:waypoint x="410" y="80" />
+        <di:waypoint x="410" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06zhzij_di" bpmnElement="Flow_06zhzij">
+        <di:waypoint x="715" y="200" />
+        <di:waypoint x="792" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ra2pjz_di" bpmnElement="Flow_1ra2pjz">
+        <di:waypoint x="305" y="380" />
+        <di:waypoint x="380" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k6dx97_di" bpmnElement="Flow_1k6dx97">
+        <di:waypoint x="280" y="355" />
+        <di:waypoint x="280" y="200" />
+        <di:waypoint x="360" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02rpn2e_di" bpmnElement="Flow_02rpn2e">
+        <di:waypoint x="2560" y="380" />
+        <di:waypoint x="2595" y="380" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

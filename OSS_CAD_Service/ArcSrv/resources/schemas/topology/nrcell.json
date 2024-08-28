@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "allOf": [{ "$ref": "wireless-resource.json" }],
+  "properties": {
+    "administrativeState": {
+      "type": "string"
+    },
+    "localCellIdNci": {
+      "type": "integer"
+    },
+    "physicalCellIdentity": {
+      "type": "integer"
+    },
+    "trackingAreaCode": {
+      "type": "integer"
+    }
+  },
+  "required": ["externalId", "administrativeState", "localCellIdNci", "physicalCellIdentity", "trackingAreaCode"]
+}

@@ -1,0 +1,23 @@
+{
+  "type": "ctw/gnbdu",
+  "id": 647,
+  "href": "ctw/gnbdu/647",
+  "externalId": "16E3AB5A157DEB90C415D4638D5B4156/ericsson-enm-ComTop:ManagedElement=NR124gNodeBRadio00040/ericsson-enm-GNBDU:GNBDUFunction=1",
+  "name": "Europe/Ireland/NR124gNodeBRadio00040/NR124gNodeBRadio00040/1",
+  "revisionNumber": 1,
+  "createdOn": "2023-02-21T16:28:12.426Z",
+  "createdBy": "sysadm",
+  "status": "operating",
+  "lastModifiedOn": "2023-02-21T16:28:12.426Z",
+  "lastModifiedBy": "sysadm",
+  "revisionGroupKey": {
+    "type": "revisionGroupKey",
+    "keyValue": 835
+  },
+  "versionNumber": 1,
+  "gnbduId": 1,
+  "key": {
+    "type": "ctw/gnbduKey",
+    "keyValue": 647
+  }
+}

@@ -1,0 +1,508 @@
+[
+    {
+        "type": "ctw/gnbdu",
+        "id": 270,
+        "href": "ctw/gnbdu/270",
+        "externalId": "DC7B963A177405864810A2F5E640762D/ericsson-enm-ComTop:ManagedElement=NR02gNodeBRadio00021/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR02gNodeBRadio00021/NR02gNodeBRadio00021/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:08.221Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:08.221Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 270
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 270
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 279,
+        "href": "ctw/gnbdu/279",
+        "externalId": "18A620FDE38287A0B4095A9A28AD5045/ericsson-enm-ComTop:ManagedElement=NR04gNodeBRadio00023/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR04gNodeBRadio00023/NR04gNodeBRadio00023/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:10.533Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:10.533Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 279
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 279
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 289,
+        "href": "ctw/gnbdu/289",
+        "externalId": "87968772573A59E96B623AB065876231/ericsson-enm-ComTop:ManagedElement=NR01gNodeBRadio00002/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR01gNodeBRadio00002/NR01gNodeBRadio00002/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:14.483Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:14.483Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 289
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 289
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 301,
+        "href": "ctw/gnbdu/301",
+        "externalId": "F467B7EFF6156C9606239D8A86E28648/ericsson-enm-ComTop:ManagedElement=NR02gNodeBRadio00023/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR02gNodeBRadio00023/NR02gNodeBRadio00023/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:15.378Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:15.378Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 301
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 301
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 313,
+        "href": "ctw/gnbdu/313",
+        "externalId": "1AF8BEFD16FF218D8E07E10F74B0A2C6/ericsson-enm-ComTop:ManagedElement=NR05gNodeBRadio00009/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR05gNodeBRadio00009/NR05gNodeBRadio00009/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:15.585Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:15.585Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 313
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 313
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 323,
+        "href": "ctw/gnbdu/323",
+        "externalId": "2060AD905CE6C95CE7E06B6E3A4607B4/ericsson-enm-ComTop:ManagedElement=NR04gNodeBRadio00007/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR04gNodeBRadio00007/NR04gNodeBRadio00007/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:18.693Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:18.693Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 323
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 323
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 332,
+        "href": "ctw/gnbdu/332",
+        "externalId": "010625742EB38A637E695FA220CA9E35/ericsson-enm-ComTop:ManagedElement=NR02gNodeBRadio00027/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR02gNodeBRadio00027/NR02gNodeBRadio00027/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:18.816Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:18.816Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 332
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 332
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 341,
+        "href": "ctw/gnbdu/341",
+        "externalId": "F311D09484AAB0654BB99242B05D076F/ericsson-enm-ComTop:ManagedElement=NR01gNodeBRadio00023/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR01gNodeBRadio00023/NR01gNodeBRadio00023/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:18.882Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:18.882Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 341
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 341
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 350,
+        "href": "ctw/gnbdu/350",
+        "externalId": "3A45E155E64B5ED03723657C9F35F1D5/ericsson-enm-ComTop:ManagedElement=NR02gNodeBRadio00003/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR02gNodeBRadio00003/NR02gNodeBRadio00003/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:18.988Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:18.988Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 350
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 350
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 351,
+        "href": "ctw/gnbdu/351",
+        "externalId": "F3F35F7D20A1944AD177F4061A8FB772/ericsson-enm-ComTop:ManagedElement=NR04gNodeBRadio00010/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR04gNodeBRadio00010/NR04gNodeBRadio00010/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:18.990Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:18.990Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 351
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 351
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 376,
+        "href": "ctw/gnbdu/376",
+        "externalId": "D14C401BE497C193D39DB68F6B44F2FD/ericsson-enm-ComTop:ManagedElement=NR04gNodeBRadio00014/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR04gNodeBRadio00014/NR04gNodeBRadio00014/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:21.980Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:21.980Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 376
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 376
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 391,
+        "href": "ctw/gnbdu/391",
+        "externalId": "BB6C535E690493607F9CE6792367F0CB/ericsson-enm-ComTop:ManagedElement=NR02gNodeBRadio00001/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR02gNodeBRadio00001/NR02gNodeBRadio00001/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:22.408Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:22.408Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 391
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 391
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 392,
+        "href": "ctw/gnbdu/392",
+        "externalId": "75E53994C5C6F018F05A1D391EF36E01/ericsson-enm-ComTop:ManagedElement=NR05gNodeBRadio00029/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR05gNodeBRadio00029/NR05gNodeBRadio00029/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:22.409Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:22.409Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 392
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 392
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 412,
+        "href": "ctw/gnbdu/412",
+        "externalId": "6A0F5D15541A8B936DF2E7D5CBB26092/ericsson-enm-ComTop:ManagedElement=NR05gNodeBRadio00026/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR05gNodeBRadio00026/NR05gNodeBRadio00026/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:23.184Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:23.184Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 412
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 412
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 426,
+        "href": "ctw/gnbdu/426",
+        "externalId": "AD975545D1D149A971AE075D2A1155EF/ericsson-enm-ComTop:ManagedElement=NR03gNodeBRadio00033/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR03gNodeBRadio00033/NR03gNodeBRadio00033/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:23.582Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:23.582Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 426
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 426
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 438,
+        "href": "ctw/gnbdu/438",
+        "externalId": "55240A6B5E8AF4DB0BDC01F0A3B9166B/ericsson-enm-ComTop:ManagedElement=NR05gNodeBRadio00010/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR05gNodeBRadio00010/NR05gNodeBRadio00010/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:23.690Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:23.690Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 438
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 438
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 439,
+        "href": "ctw/gnbdu/439",
+        "externalId": "42743C33D18E38A08F9A077460002588/ericsson-enm-ComTop:ManagedElement=NR06gNodeBRadio00007/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR06gNodeBRadio00007/NR06gNodeBRadio00007/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:23.692Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:23.692Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 439
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 439
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 457,
+        "href": "ctw/gnbdu/457",
+        "externalId": "4B2A518D73586DD990BAD612828E06B7/ericsson-enm-ComTop:ManagedElement=NR07gNodeBRadio00036/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR07gNodeBRadio00036/NR07gNodeBRadio00036/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:23.880Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:23.880Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 457
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 457
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 466,
+        "href": "ctw/gnbdu/466",
+        "externalId": "45BA65D7D8525BDC28AE6E7F355351C4/ericsson-enm-ComTop:ManagedElement=NR07gNodeBRadio00020/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR07gNodeBRadio00020/NR07gNodeBRadio00020/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:24.187Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:24.187Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 466
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 466
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 476,
+        "href": "ctw/gnbdu/476",
+        "externalId": "2FBABE04B574D52F9389A3775A13D769/ericsson-enm-ComTop:ManagedElement=NR06gNodeBRadio00018/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR06gNodeBRadio00018/NR06gNodeBRadio00018/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:24.284Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:24.284Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 476
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 476
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 485,
+        "href": "ctw/gnbdu/485",
+        "externalId": "3951921C7B0B63C08E7613830DD6E0A3/ericsson-enm-ComTop:ManagedElement=NR02gNodeBRadio00035/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR02gNodeBRadio00035/NR02gNodeBRadio00035/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:11:24.582Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:11:24.582Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 485
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 485
+        }
+    },
+    {
+        "type": "ctw/gnbdu",
+        "id": 1503,
+        "href": "ctw/gnbdu/1503",
+        "externalId": "64D53146816ABFD5768AEFF2996BE074/ericsson-enm-ComTop:ManagedElement=NR03gNodeBRadio00020/ericsson-enm-GNBDU:GNBDUFunction=1",
+        "name": "Europe/Ireland/NR03gNodeBRadio00020/NR03gNodeBRadio00020/1",
+        "revisionNumber": 1,
+        "createdOn": "2022-11-14T13:12:40.981Z",
+        "createdBy": "sysadm",
+        "status": "operating",
+        "lastModifiedOn": "2022-11-14T13:12:40.981Z",
+        "lastModifiedBy": "sysadm",
+        "revisionGroupKey": {
+            "type": "revisionGroupKey",
+            "keyValue": 1503
+        },
+        "versionNumber": 1,
+        "gnbduId": 1,
+        "key": {
+            "type": "ctw/gnbduKey",
+            "keyValue": 1503
+        }
+    }
+]

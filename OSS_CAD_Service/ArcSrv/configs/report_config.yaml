@@ -1,0 +1,20 @@
+# COPYRIGHT Ericsson 2023
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+
+object_storage:
+  host: "${OBJECT_STORE_HOSTNAME:host.docker.internal:9000/}"
+  access_key: "${OBJECT_STORE_USERNAME:aR4SVOPtLq5EoFLt}"
+  secret_key: "${OBJECT_STORE_PASSWORD:jUpKuqXbbUousbQ5a9U8WoUGtsvInklg}"
+optimization:
+  bucket_name: "cad"
+# In Days
+  retention_policy: 15
+kpi:
+  bucket_name: "cad"
+# In Days
+  retention_policy: 15

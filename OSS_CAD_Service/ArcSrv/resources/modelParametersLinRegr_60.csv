@@ -1,0 +1,3 @@
+indices,intercept,RBSymFree,ActiveDlUes,ActiveUeDlMax,MacOffloadVolDlSCell,MacOffloadVolDlSCellExt,MacRBSymAvailDl,MacRBSymUsedPdschTypeA,MacVolDl,MacVolDlDrb,MacVolDlSCell,MacVolDlSCellExt,PdschAvailTime,PdschSchedActivity,weekhour,yearday,weekday
+coefficients,5.531610864251135e-05,0.999901743138729,,,,,,,,,,,,,,,
+normalizeConstants,,20454053689.0,7.804124540673851,82.0,0.0,0.0,20456099118.0,18621499739.0,161684306412.0,161093831894.0,2498795466.0,2498795466.0,28819512.0,26136024.0,167.0,192.0,7.0

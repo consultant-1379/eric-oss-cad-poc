@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "name": "INSTANCE STOPPING",
+  "type": "object",
+  "properties": {
+    "stop": {
+      "name": "INSTANCE STOPPING",
+      "type": "string",
+      "readOnly": true,
+      "default": "Proceeding will stop this instance."
+    }
+  }
+}

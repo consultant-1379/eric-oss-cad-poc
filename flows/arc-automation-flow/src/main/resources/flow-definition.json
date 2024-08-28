@@ -1,0 +1,15 @@
+{
+  "flowId": "${project.parent.groupId}.${project.parent.artifactId}",
+  "flowName": "Carrier Aggregation Deployment",
+  "flowVersion": "${versionNumber}",
+  "description": "Automate and optimize the configuration of Advanced RAN Coordination (ARC) partners for carrier aggregation.",
+  "setup": {
+    "processId": "flow-setup",
+    "userTask": {
+      "backEnabled": false
+    }
+  },
+  "execute": {
+    "processId": "flow-execute"
+  }
+}

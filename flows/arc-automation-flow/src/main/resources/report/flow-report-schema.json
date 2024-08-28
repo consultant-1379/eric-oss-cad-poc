@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Connectivity Simulator Flow Report Schema",
+  "description": "Connectivity Simulator Flow Report Schema",
+  "type": "object",
+  "properties": {
+    "statusOfOptimization": {
+      "name": "Status of optimization",
+      "description": "Status of optimization",
+      "type": "string",
+      "objectGen": {
+        "binding": "variable:report:statusOfOptimization"
+      }
+    },
+    "optimizationReportLink": {
+      "name": "Optimization Report",
+      "description": "",
+      "type": "string",
+      "format": "download-link",
+      "objectGen": {
+        "binding": "variable:report:CAD_Optimization_Report.csv"
+      }
+    },
+    "kpisAvailable": {
+      "name": "",
+      "description": "available kpis",
+      "type": "array",
+      "objectGen": {
+        "indexBinding": "kpisValuesList",
+        "indexName": "index"
+      },
+      "items": {
+        "name": "available kpis",
+        "description": "available kpis",
+        "type": "object",
+        "properties": {
+          "kpi1": {
+            "name": "pmMacOffloadVolDlSCellExt",
+            "description": "kpi 1",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index}.kpi1"
+            }
+          },
+          "kpi2": {
+            "name": "pmMacVolDl",
+            "description": "kpi 2",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index}.kpi2"
+            }
+          },
+          "kpi3": {
+            "name": "pmMacVolDlSCellExt",
+            "description": "kpi 3",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index}.kpi3"
+            }
+          }
+        },
+        "required": ["kpi1","kpi2", "kpi3"]
+      }
+    },
+    "kpisHistory": {
+      "name": "",
+      "description": "available kpis History",
+      "type": "array",
+      "objectGen": {
+        "indexBinding": "kpisHistoryValuesList",
+        "indexName": "index2"
+      },
+      "items": {
+        "name": "KPIs history",
+        "description": "this table is presenting the KPI history",
+        "type": "object",
+        "properties": {
+          "timeStamp": {
+            "name": "Time Stamp",
+            "description": "time when KPIs were received",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index2}.timeStamp"
+            }
+          },
+          "kpi1History": {
+            "name": "pmMacOffloadVolDlSCellExt",
+            "description": "kpi 1",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index2}.kpi1History"
+            }
+          },
+          "kpi2History": {
+            "name": "pmMacVolDl",
+            "description": "kpi 2",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index2}.kpi2History"
+            }
+          },
+          "kpi3History": {
+            "name": "pmMacVolDlSCellExt",
+            "description": "kpi 3",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index2}.kpi3History"
+            }
+          }
+        },
+        "required": ["timeStamp", "kpi1History", "kpi2History", "kpi3History"]
+      }
+    }
+  },
+  "required": [
+    "statusOfOptimization"
+  ]
+}

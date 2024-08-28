@@ -1,0 +1,32 @@
+{
+  "selectGNBDUs" : {
+    "table" : [ {
+      "gNBName" : "Europe/Ireland/NR02gNodeBRadio00021/NR02gNodeBRadio00021/1",
+      "gNBId" : 270,
+      "gNBCmHandle" : "DC7B963A177405864810A2F5E640762D"
+    }, {
+      "gNBName" : "Europe/Ireland/NR04gNodeBRadio00023/NR04gNodeBRadio00023/1",
+      "gNBId" : 279,
+      "gNBCmHandle" : "18A620FDE38287A0B4095A9A28AD5045"
+    }, {
+      "gNBName" : "Europe/Ireland/NR01gNodeBRadio00002/NR01gNodeBRadio00002/1",
+      "gNBId" : 1503,
+      "gNBCmHandle" : "64D53146816ABFD5768AEFF2996BE074"
+    } ]
+  },
+  "unwantedGNodeBPairsSelection" : {
+    "primaryGNBDUExclusion" : [ ],
+    "secondaryGNBDUExclusion" : [ ],
+    "readOnlyTable" : [ ]
+  },
+  "mandatoryGNodeBPairsSelection" : {
+    "primaryGNBDUMandatory" : [ ],
+    "secondaryGNBDUMandatory" : [ ],
+    "readOnlyTable" : [ {
+      "pGnbduId" : 270,
+      "pGnbduName" : "Europe/Ireland/NR02gNodeBRadio00021/NR02gNodeBRadio00021/1",
+      "sGnbduId" : 301,
+      "sGnbduName" : "Europe/Ireland/NR02gNodeBRadio00023/NR02gNodeBRadio00023/1"
+    } ]
+  }
+}

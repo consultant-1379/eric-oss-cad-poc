@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "description": "Optimization Results Configuration",
+  "properties": {
+    "showConfigurationValue": {
+      "name": "Automatic confirmation for new configurations is currently set to:",
+      "type": "string",
+      "readOnly": true,
+      "schemaGen": {
+        "type": "default",
+        "binding": "variable:local:showConfiguration"
+      }
+    },
+    "showConfiguration": {
+      "name": "Apply Optimization Results Automatically?",
+      "type": "string",
+      "format": "select",
+      "info": "By selecting yes, BB links produced by the optimization will be automatically applied. If no is selected, the user will have the option to review and select which BB links should be applied.",
+      "enum": [
+        "yes",
+        "no"
+      ],
+      "enumNames": [
+        "Yes, I want optimization results to be automatically applied.",
+        "No, I want to review optimization results before applying them."
+      ],
+      "schemaGen": {
+        "type": "default",
+        "binding": "variable:local:showConfiguration"
+      }
+    }
+  },
+  "required": [ "showConfiguration"],
+  "additionalProperties": false
+}

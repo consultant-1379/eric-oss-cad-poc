@@ -1,0 +1,30 @@
+# COPYRIGHT Ericsson 2023
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "eric-oss-cad-poc.name" . }}-delete
+  labels: {{- include "eric-oss-cad-poc.hooks-labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-delete"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    {{- include "eric-oss-cad-poc.product-info" . | nindent 4 }}
+spec:
+  restartPolicy: Never
+  containers:
+  - name: pre-delete
+    {{- $image := merge (dict "imageName" "cadOptimization") . }}
+    image: {{ include "eric-oss-cad-poc.image" $image }}
+    {{- $version := .Chart.Version | replace "+" "-" }}
+    command: ['sh', '-c', 'curl -X DELETE http://eric-oss-flow-automation:8080/flow-automation/v1/flows/com.ericsson.oss.flow.arc-automation?force=true']
+    imagePullPolicy: {{ .Values.imageCredentials.pullPolicy | quote }}
+  {{- if include "eric-oss-cad-poc.pullSecrets" . }}
+  imagePullSecrets:
+    - name: {{ template "eric-oss-cad-poc.pullSecret" . }}
+  {{- end }}

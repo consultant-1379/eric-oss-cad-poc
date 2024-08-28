@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "cmHandle":{
+        "type": "string"
+      } ,
+      "gNBId": {
+        "type": "integer"
+      },
+      "mcc": {
+        "type": "integer"
+      },
+      "mnc": {
+        "type": "integer"
+      },
+      "gNBIdLength": {
+        "type": "integer"
+      }
+    },
+
+    "required": [
+      "gNBId",
+      "name",
+      "cmHandle"
+    ]
+  }
+}

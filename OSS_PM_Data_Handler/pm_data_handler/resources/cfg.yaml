@@ -1,0 +1,33 @@
+# COPYRIGHT Ericsson 2023
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+
+version: 1
+disable_existing_loggers: true
+formatters:
+  PM_Data_Handler:
+    format: "%(asctime)s :: %(levelname)s :: %(message)s :: %(version)s :: %(service_id)s :: %(module)s"
+  extended:
+    format: '%(asctime)s :: %(levelname)s :: [%(process)d]%(processName)s :: %(threadName)s[%(thread)d] :: %(pathname)s :: %(lineno)d :: %(message)s'
+  simple:
+    format: "%(asctime)s :: %(name)s :: %(message)s :: %(filename)s"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: PM_Data_Handler
+    stream: ext://sys.stdout
+
+loggers:
+  dev:
+    handlers: [ console ]
+  prod:
+    handlers: [ console ] #For now, we'll stick to the console output as PM-data-Handler is not yet in production !
+root:
+  level: DEBUG
+  handlers: [ console ]

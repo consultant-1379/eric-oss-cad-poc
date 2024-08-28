@@ -1,0 +1,721 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Connectivity Simulator Flow Setup User Task Schema",
+  "type": "object",
+  "properties": {
+    "licenseCheck": {
+      "name": "License Check",
+      "type": "object",
+      "format": "informational",
+      "properties": {
+        "licenseMessage": {
+          "name": "License Check Successful.",
+          "type": "string",
+          "format": "message-info",
+          "info": "A full check of the application license has been performed successfully."
+        },
+        "licensesLink": {
+          "name": "Available Licenses",
+          "type": "string",
+          "format": "informational-link",
+          "linkText": "Search full Licenses list",
+          "default": "https://www.google.com"
+        }
+      },
+      "additionalProperties": false
+    },
+    "selectGNBDUs": {
+      "name": "Select Node",
+      "type": "object",
+      "properties": {
+        "table": {
+          "name": "Primary GNBDUs table",
+          "type": "array",
+          "minItems": 1,
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gNBName": {
+                "type": "string",
+                "name": "Name"
+              },
+              "gNBId": {
+                "type": "integer",
+                "name": "gNBId"
+              }
+            },
+            "required": [
+              "gNBName",
+              "gNBId"
+            ],
+            "additionalProperties": {
+              "anyOf": [{
+                "gNBCmHandle": {
+                  "type": "string",
+                  "name": "CmHandle"
+                }
+              }]
+            }
+          },
+          "schemaGen": [
+            {
+              "type": "default",
+              "binding": "variable:local:selectedGnbs"
+            },
+            {
+              "type": "selectableItems",
+              "binding": "variable:local:gNBList"
+            }
+          ]
+        }
+      },
+      "required": [
+        "table"
+      ],
+      "additionalProperties": false
+    },
+    "unwantedGNodeBPairsSelection": {
+      "name": "Select excluded links",
+      "type": "object",
+      "properties": {
+        "informationalField": {
+          "name": "This user task allows you to select the gNodeB pairs to exclude. You can either enter a list of pairs using the string input box or select the primary gNodeB and the secondary gNode B with the selectable table. To move to the next step please confirm this user task with no entry",
+          "type": "string",
+          "format": "informational"
+        },
+        "stringJson": {
+          "name": "List of excluded links",
+          "type": "string",
+          "info": "This field is optional"
+        },
+        "primaryGNBDUExclusion": {
+          "name": "Excluded Link Primary gNodeB",
+          "type": "array",
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gNBName": {
+                "type": "string",
+                "name": "Name"
+              },
+              "gNBId": {
+                "type": "integer",
+                "name": "gNBId"
+              }
+            },
+            "required": [
+              "gNBName",
+              "gNBId"
+            ],
+            "additionalProperties": {
+              "anyOf": [{
+                "gNBCmHandle": {
+                  "type": "string",
+                  "name": "CmHandle"
+                }
+              }]
+            }
+          },
+          "default": [],
+          "schemaGen": [
+            {
+              "type": "selectableItems",
+              "binding": "variable:local:selectedGNBDUs"
+            }
+          ]
+        },
+        "neighbouring": {
+          "name": "Excluded Link Secondary gNodeB",
+          "type": "array",
+
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gNBName": {
+                "type": "string",
+                "name": "Name"
+              },
+              "gNBId": {
+                "type": "integer",
+                "name": "gNBId"
+              },
+              "SecondarygNBId": {
+                "type": "integer",
+                "name": "Secondary Node Id"
+              },
+              "SecondarygNBName": {
+                "type": "string",
+                "name": "Secondary Node Name"
+              }
+            },
+            "required": [
+              "gNBName",
+              "gNBId",
+              "SecondarygNBId",
+              "SecondarygNBName"
+            ],
+            "additionalProperties": {
+              "anyOf": [{
+                "gNBCmHandle": {
+                  "type": "string",
+                  "name": "CmHandle"
+                }
+              }]
+            }
+          },
+          "default": [],
+          "schemaGen": [
+            {
+              "type": "selectableItems",
+              "binding": "variable:local:secGNBDUs"
+            }
+          ]
+        },
+        "readOnlyTable": {
+          "name": "Selected unwanted links table",
+          "type": "array",
+          "format": "table",
+          "readOnly": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "pGnbduId": {
+                "type": "integer",
+                "name": "Primary gNodeB Id"
+              },
+              "pGnbduName": {
+                "type": "string",
+                "name": "Primary gNodeB Name"
+              },
+              "sGnbduId": {
+                "type": "integer",
+                "name": "Secondary gNodeB Id"
+              },
+              "sGnbduName": {
+                "type": "string",
+                "name": "Secondary gNodeB Name"
+              }
+            },
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:excludedPairs"
+          }
+        }
+      }
+    },
+    "mandatoryGNodeBPairsSelection": {
+      "name": "Select mandatory links",
+      "type": "object",
+      "properties": {
+        "informationalField": {
+          "name": "This user task allows you to select the mandatory gNodeB pairs. You can either enter a list of pairs using the string input box or select the primary gNodeB and the secondary gNode B with the selectable table. To move to the next step please confirm this user task with no entry",
+          "type": "string",
+          "format": "informational"
+        },
+        "stringJson": {
+          "name": "List of mandatory links",
+          "type": "string",
+          "info": "This field is optional"
+        },
+        "primaryGNBDUMandatory": {
+          "name": "Mandatory Link Primary gNodeB",
+          "type": "array",
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gNBName": {
+                "type": "string",
+                "name": "Name"
+              },
+              "gNBId": {
+                "type": "integer",
+                "name": "gNBId"
+              }
+            },
+            "required": [
+              "gNBName",
+              "gNBId"
+            ],
+            "additionalProperties": {
+              "anyOf": [{
+                "gNBCmHandle": {
+                  "type": "string",
+                  "name": "CmHandle"
+                }
+              }]
+            }
+          },
+          "default": [],
+          "schemaGen": [
+            {
+              "type": "selectableItems",
+              "binding": "variable:local:selectedGNBDUs"
+            }
+          ]
+        },
+        "neighbouring": {
+          "name": "Mandatory Link Secondary gNodeB",
+          "type": "array",
+
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gNBName": {
+                "type": "string",
+                "name": "Name"
+              },
+              "gNBId": {
+                "type": "integer",
+                "name": "gNBId"
+              },
+              "SecondarygNBId": {
+                "type": "integer",
+                "name": "Secondary Node Id"
+              },
+              "SecondarygNBName": {
+                "type": "string",
+                "name": "Secondary Node Name"
+              }
+            },
+            "required": [
+              "gNBName",
+              "gNBId",
+              "SecondarygNBId",
+              "SecondarygNBName"
+            ],
+            "additionalProperties": {
+              "anyOf": [{
+                "gNBCmHandle": {
+                  "type": "string",
+                  "name": "CmHandle"
+                }
+              }]
+            }
+          },
+          "default": [],
+          "schemaGen": [
+            {
+              "type": "selectableItems",
+              "binding": "variable:local:secGNBDUs"
+            }
+          ]
+        },
+        "readOnlyTable": {
+          "name": "Selected mandatory links table",
+          "type": "array",
+          "format": "table",
+          "readOnly": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "pGnbduId": {
+                "type": "integer",
+                "name": "Primary gNodeB Id"
+              },
+              "pGnbduName": {
+                "type": "string",
+                "name": "Primary gNodeB Name"
+              },
+              "sGnbduId": {
+                "type": "integer",
+                "name": "Secondary gNodeB Id"
+              },
+              "sGnbduName": {
+                "type": "string",
+                "name": "Secondary gNodeB Name"
+              }
+            },
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:mandatoryPairs"
+          }
+        }
+      }
+    },
+    "selectScheduleUserTask": {
+      "name": "Select Execution Schedule",
+      "type": "object",
+      "properties": {
+        "startTime": {
+          "name": "Start time",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [
+            {
+              "properties": {
+                "startTime": {
+                  "name": "Immediately",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "startTime"
+              ],
+              "additionalProperties": false,
+              "enum": [{"startTime": true}]
+            },
+            {
+              "properties": {
+                "hoursLater": {
+                  "name": "Hours later",
+                  "type": "object",
+                  "properties": {
+                    "hoursLater": {
+                      "name": "hour",
+                      "type": "integer",
+                      "default": "1",
+                      "minimum": 1,
+                      "maximum": 744
+                    }
+                  },
+                  "required": [
+                    "hoursLater"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "hoursLater"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "specifyDate": {
+                  "name": "Specify date",
+                  "type": "object",
+                  "properties": {
+                    "specifyDate": {
+                      "name": "date and time",
+                      "type": "string",
+                      "format": "date-time",
+                      "schemaGen": {
+                        "type": "default",
+                        "binding": "variable:local:currentTime"
+                      }
+                    }
+                  },
+                  "required": [
+                    "specifyDate"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "specifyDate"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "baselineKPI": {
+          "name": "Show baseline KPI",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [
+            {
+              "properties": {
+                "no" : {
+                  "name": "No",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "no"
+              ],
+              "additionalProperties": false,
+              "enum": [{"no": true}]
+            },
+            {
+              "properties": {
+                "yes": {
+                  "name": "Yes",
+                  "type": "object",
+                  "properties": {
+                    "time": {
+                      "name": "Observation time for baseline KPI",
+                      "type": "object",
+                      "format": "radio",
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "hour" : {
+                              "name": "One hour",
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "hour"
+                          ],
+                          "additionalProperties": false,
+                          "enum": [{"hour": true}]
+                        },
+                        {
+                          "properties": {
+                            "day" : {
+                              "name": "One day",
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "day"
+                          ],
+                          "additionalProperties": false,
+                          "enum": [{"day": true}]
+                        },
+                        {
+                          "properties": {
+                            "week" : {
+                              "name": "One week",
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "week"
+                          ],
+                          "additionalProperties": false,
+                          "enum": [{"week": true}]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "time"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "yes"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "recurrence": {
+          "name": "recurrence",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [
+            {
+              "properties": {
+                "noRecurrence": {
+                  "name": "no",
+                  "type": "object",
+                  "properties": {
+                    "applyResultsAutomatically": {
+                      "name": "Apply Optimization Results Automatically",
+                      "type": "object",
+                      "format": "radio",
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "yes": {
+                              "name": "Yes",
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "yes"
+                          ],
+                          "additionalProperties": false,
+                          "enum": [{"yes": true}]
+                        },
+                        {
+                          "properties": {
+                            "no": {
+                              "name": "No",
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "no"
+                          ],
+                          "additionalProperties": false,
+                          "enum": [{"no": true}]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "applyResultsAutomatically"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "noRecurrence"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "withRecurrence": {
+                  "name": "yes",
+                  "type": "object",
+                  "properties": {
+                    "selectRecurrencePreference": {
+                      "name": "Fill recurrence",
+                      "type": "object",
+                      "properties": {
+                        "recurrencePattern": {
+                          "name": "Recurrence Pattern",
+                          "type": "object",
+                          "format": "radio",
+                          "oneOf": [
+                            {
+                              "properties": {
+                                "hourly": {
+                                  "name": "Hourly",
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "hourly"
+                              ],
+                              "additionalProperties": false,
+                              "enum": [{"hourly": true}]
+                            },
+                            {
+                              "properties": {
+                                "daily": {
+                                  "name": "Daily",
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "daily"
+                              ],
+                              "additionalProperties": false,
+                              "enum": [{"daily": true}]
+                            },
+                            {
+                              "properties": {
+                                "everyMinute": {
+                                  "name": "Every 30 seconds",
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "everyMinute"
+                              ],
+                              "additionalProperties": false,
+                              "enum": [{"everyMinute": true}]
+                            }
+                          ]
+                        },
+                        "recurrenceStop": {
+                          "name": "Recurrence Stop",
+                          "type": "object",
+                          "format": "radio",
+                          "oneOf": [
+                            {
+                              "properties": {
+                                "endDate": {
+                                  "name": "End by",
+                                  "type": "object",
+                                  "properties": {
+                                    "specifyDate": {
+                                      "name": "date and time",
+                                      "type": "string",
+                                      "format": "date-time",
+                                      "schemaGen": {
+                                        "type": "default",
+                                        "binding": "variable:local:currentTime"
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "specifyDate"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "endDate"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "properties": {
+                                "afterNumberOfOccurrences": {
+                                  "name": "After number of occurences",
+                                  "type": "object",
+                                  "properties": {
+                                    "afterOccurrences": {
+                                      "name": "occurrences",
+                                      "type": "integer",
+                                      "minimum": 2
+                                    }
+                                  },
+                                  "required": [
+                                    "afterOccurrences"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "afterNumberOfOccurrences"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "properties": {
+                                "noEndDate": {
+                                  "name": "No end Date",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              },
+                              "required": [
+                                "noEndDate"
+                              ],
+                              "additionalProperties": false,
+                              "enum": [{"noEndDate": true}]
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "recurrencePattern",
+                        "recurrenceStop"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "selectRecurrencePreference"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "withRecurrence"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "startTime",
+        "baselineKPI",
+        "recurrence"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "selectGNBDUs"
+  ]
+}

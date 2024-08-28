@@ -1,0 +1,46 @@
+# COPYRIGHT Ericsson 2023
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "eric-oss-cad-poc.name" . }}-install
+  labels: {{- include "eric-oss-cad-poc.hooks-labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "post-install"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    {{- include "eric-oss-cad-poc.product-info" . | nindent 4 }}
+spec:
+  restartPolicy: Never
+  containers:
+  - name: post-install
+    {{- $image := merge (dict "imageName" "cadOptimization") . }}
+    image: {{ include "eric-oss-cad-poc.image" $image }}
+    {{- $version := .Chart.Version | replace "+" "-" }}
+    command: ['sh', '-c', 'cd /arc_app/flow && zip -r /tmp/arc-automation-flow-{{ $version }}.zip ./* && curl -F "flow-package=@/tmp/arc-automation-flow-{{ $version }}.zip" http://eric-oss-flow-automation:8080/flow-automation/v1/flows -H "UserID: gas-user"']
+    imagePullPolicy: {{ .Values.imageCredentials.pullPolicy | quote }}
+    volumeMounts:
+    - name: config
+      mountPath: /arc_app/flow/resources/config.properties
+      subPath: config.properties
+    - name: config
+      mountPath: /arc_app/flow/flow-definition.json
+      subPath: flow-definition.json
+  {{- if include "eric-oss-cad-poc.pullSecrets" . }}
+  imagePullSecrets:
+    - name: {{ template "eric-oss-cad-poc.pullSecret" . }}
+  {{- end }}
+  volumes:
+    - name: config
+      configMap:
+        name: {{ include "eric-oss-cad-poc.name" . }}
+        items:
+          - key: config.properties
+            path: config.properties
+          - key: flow-definition.json
+            path: flow-definition.json

@@ -1,0 +1,103 @@
+# COPYRIGHT Ericsson 2023
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+
+version: '3.4'
+services:
+  mongodb:
+    image: "docker.io/bitnami/mongodb:6.0.2"
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/bitnami/mongodb
+    container_name: mongodb
+    environment:
+      - MONGODB_ROOT_PASSWORD=password123
+      - MONGODB_USERNAME=mongodb
+      - MONGODB_PASSWORD=password123
+      - MONGODB_DATABASE=arc_db
+
+  arcoptimization:
+    build:
+      context: .
+      dockerfile: ./OSS_CAD_Service/Dockerfile
+      network: host
+    image: "arcapp:${version:-latest}"
+    ports:
+      - "5000:5000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2048m"
+    container_name: arcoptimization
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOPOLOGY_HOSTNAME=d1
+      - TOPOLOGY_PASSWORD=d2
+      - TOPOLOGY_USERNAME=d3
+      - CM_HOSTNAME=d4
+      - CM_PASSWORD=d5
+      - CM_USERNAME=d6
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+
+  httpd:
+    image: "armdocker.rnd.ericsson.se/proj_oss_releases/enm/fa-ui:${version:-latest}"
+    ports:
+      - "8282:80"
+      - "6666:6666"
+    container_name: apache
+
+  postgres:
+    container_name: db
+    image: "armdocker.rnd.ericsson.se/proj_oss_releases/enm/fa-db:${version:-latest}"
+    ports:
+      - "5431:5432"
+
+  access_control:
+    container_name: access-control
+    image: "armdocker.rnd.ericsson.se/proj_oss_releases/enm/fa-access-control:${version:-latest}"
+    ports:
+      - "1389:1389"
+      - "1636:1636"
+      - "4444:4444"
+    volumes:
+      - policies:/ericsson/tor/data/access_control/policies/dist
+      - data:/ericsson/tor/data
+      - idenmgmt:/ericsson/tor/data/idenmgmt
+
+  fa_jboss:
+    container_name: fa
+    image: "armdocker.rnd.ericsson.se/proj_oss_releases/enm/fa-service:${version:-latest}"
+    ports:
+      - "9999:9999"
+      - "9990:9990"
+      - "9090:9090"
+      - "8080:8080"
+      - "8787:8787"
+      - "4447:4447"
+    volumes:
+      - policies:/ericsson/tor/data/access_control/policies/dist
+      - data:/ericsson/tor/data
+      - idenmgmt:/ericsson/tor/data/idenmgmt
+    links:
+      - postgres:postgresql01
+      - access_control:ldap-remote
+      - access_control:ldap-local
+      - httpd:fa-httpd
+    depends_on:
+      - postgres
+      - access_control
+      - arcoptimization
+
+volumes:
+  policies:
+  data:
+  idenmgmt:
+  mongodb_data:
